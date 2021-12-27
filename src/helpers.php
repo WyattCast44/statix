@@ -1,8 +1,8 @@
 <?php
 
+use Statix\Application;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\View\Factory as ViewFactory;
-use Statix\Application;
 
 if(!function_exists('path')) {
 
