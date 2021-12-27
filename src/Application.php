@@ -4,13 +4,14 @@ namespace Statix;
 
 use Exception;
 use Dotenv\Dotenv;
+use Statix\Support\Container;
 use Illuminate\Console\Command;
+use Statix\Commands\MakeCommand;
 use Illuminate\Config\Repository;
 use Illuminate\Events\Dispatcher;
-use Statix\Support\PathRepository;
 use Statix\Routing\RouteRegistrar;
+use Statix\Support\PathRepository;
 use Illuminate\View\FileViewFinder;
-use Illuminate\Container\Container;
 use Illuminate\Support\Facades\View;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -21,7 +22,9 @@ use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Factory as ViewFactory;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\Console\Application as ConsoleApplication;
+use Illuminate\Contracts\Foundation\Application as FoundationApplication;
 use Illuminate\Contracts\View\Factory as ViewFactoryContact;
+use Statix\Commands\MakeComponent;
 
 class Application
 {
@@ -61,6 +64,8 @@ class Application
         $this->container->instance(Application::class, $this);
 
         $this->container->setInstance($this->container);
+
+        $this->container->instance(FoundationApplication::class, $this->container);
 
         Facade::setFacadeApplication($this->container);
 
@@ -145,7 +150,9 @@ class Application
     private function ensureDefaultCommandsAreRegistered()
     {
         $this->cli->resolveCommands([
-            ClearCompiledViews::class
+            ClearCompiledViews::class,
+            MakeCommand::class,
+            MakeComponent::class,
         ]);
 
         return $this;
