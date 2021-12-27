@@ -12,7 +12,7 @@ class ClearCompiledViews extends Command
 
     public function handle()
     {
-        array_map('unlink', array_filter((array) glob(path('view_cache') . '/*')));
+        array_map('unlink', array_filter((array) glob(path('view_cache') . '/*.php')));
 
         $this->info(PHP_EOL . 'Cleared compiled templates!');
     }
