@@ -2,6 +2,6 @@
 
 return [
 
-    'title' => 'Example Statix Application',
+    'title' => 'Example Statix Application, meta key',
 
 ];

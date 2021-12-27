@@ -9,6 +9,9 @@ use Illuminate\Console\Command;
 use Statix\Commands\MakeCommand;
 use Illuminate\Config\Repository;
 use Illuminate\Events\Dispatcher;
+use Statix\Commands\BuildCommand;
+use NunoMaduro\Collision\Provider;
+use Statix\Commands\MakeComponent;
 use Statix\Routing\RouteRegistrar;
 use Statix\Support\PathRepository;
 use Illuminate\View\FileViewFinder;
@@ -22,9 +25,9 @@ use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Factory as ViewFactory;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\Console\Application as ConsoleApplication;
-use Illuminate\Contracts\Foundation\Application as FoundationApplication;
 use Illuminate\Contracts\View\Factory as ViewFactoryContact;
-use Statix\Commands\MakeComponent;
+use Illuminate\Contracts\Foundation\Application as FoundationApplication;
+use Statix\Commands\WatchCommand;
 
 class Application
 {
@@ -38,6 +41,8 @@ class Application
 
     public function __construct()
     {
+        (new Provider)->register();
+
         $this
             ->ensureContainerIsBinded()
             ->ensurePathsAreBindedAndConfigured()
@@ -142,7 +147,7 @@ class Application
 
         $this->cli = $this->container->make('cli');
 
-        $this->cli->setName($this->config->get('app.name'));
+        $this->cli->setName($this->config->get('app.name', 'Statix Application'));
 
         return $this;
     }
@@ -150,9 +155,11 @@ class Application
     private function ensureDefaultCommandsAreRegistered()
     {
         $this->cli->resolveCommands([
+            BuildCommand::class,
             ClearCompiledViews::class,
             MakeCommand::class,
             MakeComponent::class,
+            WatchCommand::class,
         ]);
 
         return $this;

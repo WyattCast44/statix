@@ -1,18 +1,15 @@
 <?php
 
 use Statix\Routing\Route;
-use Illuminate\Support\Facades\Route as Router;
 
 Route::view('/', 'welcome')->name('welcome');
+Route::view('/pages/about', 'about')->name('about');
 
-Route::define('/blog', function() {
-    return view('blog.index');
-})->name('blog.index');
-
-// Router::view('/', 'welcome')->name('welcome');
+// Route::define('/blog', function() {
+//     return view('blog.index');
+// })->name('blog.index');
 
 // Route::define('/blog/posts', function() {
-
 // })->name('blog.posts.index');
 
 // Route::view('/', 'welcome')->name('welcome');

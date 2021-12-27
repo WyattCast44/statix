@@ -8,8 +8,6 @@
     <title>{{ config('meta.title', 'Example Title') }}</title>
 </head>
 <body>
-
-    <x-hello />
-
+    @yield('body')
 </body>
 </html>

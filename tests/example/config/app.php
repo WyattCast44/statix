@@ -13,7 +13,7 @@ return [
     ],
 
     'paths' => [
-        'test-path' => path('cwd') . '/statix.php'
+        'test-path' => path('cwd') . '/statix.php',
     ],
 
     'routes' => [

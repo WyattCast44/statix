@@ -10,6 +10,7 @@ class Route
     public $data;
     public $name;
     public $sequence;
+    public $strategy;
 
     public static function define($uri, $handler, $data = []): Route
     {
@@ -17,6 +18,7 @@ class Route
             $instance->uri = $uri;
             $instance->handler = $handler;
             $instance->data = $data;
+            $instance->strategy = 'handler';
         });
     }
 
@@ -26,6 +28,7 @@ class Route
             $instance->uri = $uri;
             $instance->view = $view;
             $instance->data = $data;
+            $instance->strategy = 'view';
         });
     }
 

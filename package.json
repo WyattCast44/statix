@@ -1,0 +1,11 @@
+{
+  "name": "statix",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/WyattCast44/statix.git",
+  "author": "Wyatt Castaneda <wyatt.castaneda@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chokidar": "^3.5.2"
+  }
+}

@@ -6,7 +6,9 @@ use Statix\Routing\Route;
 
 class RouteRegistrar
 {
-    protected $routes = [];
+    public $routes = [];
+
+    public $namedRoutes = [];
 
     public function add(Route $route)
     {
@@ -17,7 +19,12 @@ class RouteRegistrar
             'data' => $route->data,
             'handler' => $route->handler,
             'sequence' => $route->sequence,
+            'strategy' => $route->strategy,
         ];
+
+        if($route->name) {
+            $this->namedRoutes[$route->name] = $route->uri;
+        }
 
         return $this;
     }

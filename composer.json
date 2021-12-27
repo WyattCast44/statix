@@ -18,7 +18,9 @@
         "illuminate/console": "^8.77",
         "illuminate/events": "^8.77",
         "illuminate/filesystem": "^8.77",
-        "illuminate/view": "^8.77"
+        "illuminate/view": "^8.77",
+        "nunomaduro/collision": "^5.10",
+        "spatie/file-system-watcher": "^1.0"
     },
     "autoload": {
         "psr-4": {

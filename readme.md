@@ -19,7 +19,20 @@ Statix is a powerful Laravel-esque static site generator.
 # Inspirations
 
 - https://github.com/aschmelyun/cleaver/
+- https://github.com/mattstauffer/Torch
+- https://jigsaw.tighten.co/
+- https://usecleaver.com/docs/index.html
+
+# Links
+
+- https://stackoverflow.com/questions/65651169/php-check-if-function-callable-but-not-invokable-object
+- https://github.com/spatie/file-system-watcher
 
 # Routing
 
 - route groups
+- allowable route strategies
+    - [controller::class, 'method']
+    - Controller::class (invokable)
+    - closure
+    - view
