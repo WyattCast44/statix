@@ -1,7 +1,7 @@
 <?php
 
 use Statix\Application;
-use Illuminate\Container\Container;
+use Statix\Support\Container;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 
 if(!function_exists('container')) {
