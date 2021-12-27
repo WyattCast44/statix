@@ -1,0 +1,36 @@
+{
+    "name": "wyattcast44/statix",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Wyatt Castaneda",
+            "email": "wyatt.castaneda@gmail.com"
+        }
+    ],
+    "require": {
+        "illuminate/container": "^8.77",
+        "illuminate/config": "^8.77",
+        "illuminate/support": "^8.77",
+        "vlucas/phpdotenv": "^5.4",
+        "illuminate/http": "^8.77",
+        "illuminate/collections": "^8.77",
+        "illuminate/console": "^8.77",
+        "illuminate/events": "^8.77",
+        "illuminate/filesystem": "^8.77",
+        "illuminate/view": "^8.77"
+    },
+    "autoload": {
+        "psr-4": {
+            "Statix\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": { 
+            "StatixTest\\": "tests/example/app" 
+        }
+    }
+}
