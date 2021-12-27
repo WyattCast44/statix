@@ -4,32 +4,11 @@ use Statix\Application;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 
-if(!function_exists('path')) {
+if(!function_exists('container')) {
 
-    /**
-     * Get the given named path
-     * 
-     * @return mixed
-     */
-    function path($key = null, $default = null): mixed
+    function container(): Container
     {
-        if($key != null) {
-            return Container::getInstance()->make('paths')->get($key, $default);
-        }
-
-        return Container::getInstance()->make('paths');
-    }
-
-}
-
-if(!function_exists('view')) {
-
-    function view($template, $data = [])
-    {
-        return Container::getInstance()
-            ->make(ViewFactory::class)
-            ->make($template, $data)
-            ->render();
+        return Container::getInstance();
     }
 
 }
@@ -38,16 +17,45 @@ if(!function_exists('app')) {
 
     function app(): Application
     {
-        return Container::getInstance()->make(Application::class);
+        return container()->make(Application::class);
     }
 
 }
 
-if(!function_exists('container')) {
+if(!function_exists('config')) {
 
-    function container(): Container
+    function config($key = null, $default = null): mixed
     {
-        return Container::getInstance();
+        if($key != null) {
+            return container()->make('config')->get($key, $default);
+        }
+
+        return container()->make('config');
+    }
+
+}
+
+if(!function_exists('path')) {
+
+    function path($key = null, $default = null): mixed
+    {
+        if($key != null) {
+            return container()->make('paths')->get($key, $default);
+        }
+
+        return container()->make('paths');
+    }
+
+}
+
+if(!function_exists('view')) {
+
+    function view($template, $data = [])
+    {
+        return container()
+            ->make(ViewFactory::class)
+            ->make($template, $data)
+            ->render();
     }
 
 }

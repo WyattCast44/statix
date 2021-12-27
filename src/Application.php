@@ -241,8 +241,6 @@ class Application
 
         require path('cwd'). '/routes/web.php';
 
-        dd($this->container->make(RouteRegistrar::class));
-
         return $this;
     }
 }

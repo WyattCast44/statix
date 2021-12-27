@@ -19,3 +19,7 @@ Statix is a powerful Laravel-esque static site generator.
 # Inspirations
 
 - https://github.com/aschmelyun/cleaver/
+
+# Routing
+
+- route groups
