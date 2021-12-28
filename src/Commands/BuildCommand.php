@@ -2,10 +2,13 @@
 
 namespace Statix\Commands;
 
+use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Filesystem\Filesystem;
+
+use function PHPSTORM_META\type;
 
 class BuildCommand extends Command
 {
@@ -57,6 +60,12 @@ class BuildCommand extends Command
             if($route['strategy'] === 'handler') {
                 
                 $this->line('Building URI: ' . $uri);
+                
+                dd(
+                    $route['handler'],
+                    $route['handler'] instanceof Closure, 
+                    class_exists($route['handler']),
+                );
 
                 if($uri === '/') {
                     
