@@ -2,6 +2,7 @@
 
 namespace Statix\Commands;
 
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Filesystem\Filesystem;
@@ -20,6 +21,8 @@ class BuildCommand extends Command
         $this->line('============================');
 
         $routes = collect(container()->make(RouteRegistrar::class)->routes);
+
+        (new Filesystem)->deleteDirectory(path('builds') . '/prod');
         
         $routes->each(function($route, $uri) {
             
@@ -27,9 +30,11 @@ class BuildCommand extends Command
                 
                 $this->line('Building URI: ' . $uri . ', View: ' . $route['view']);
 
-                if(!file_exists(path('views') . '/' . $route['view'])) {
-                    $this->error('View does not exist: ' . $route['view']);
-                    return;
+                $path = path('views') . '/' . Str::replace('.', '/', $route['view']) . '.blade.php';
+
+                if(!file_exists($path)) {
+                    $this->error('View does not exist: ' . $route['view'] . PHP_EOL);
+                    return true;
                 }
 
                 if($uri === '/') {
@@ -47,6 +52,8 @@ class BuildCommand extends Command
                 }
             }
         });
+
+        container()->make(RouteRegistrar::class)->routes = [];
 
     }
 }

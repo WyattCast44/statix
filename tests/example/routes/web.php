@@ -3,8 +3,7 @@
 use Statix\Routing\Route;
 
 Route::view('/', 'welcome')->name('welcome');
-Route::view('/pages/about', 'about')->name('about');
-Route::view('/pages/contact', 'contact')->name('contact');
+Route::view('/about', 'about')->name('about');
 
 // Route::define('/blog', function() {
 //     return view('blog.index');
