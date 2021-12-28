@@ -20,8 +20,6 @@ class BuildCommand extends Command
         $this->line('============================');
 
         $routes = collect(container()->make(RouteRegistrar::class)->routes);
-
-        var_dump($routes);
         
         $routes->each(function($route, $uri) {
             
@@ -29,11 +27,17 @@ class BuildCommand extends Command
                 
                 $this->line('Building URI: ' . $uri . ', View: ' . $route['view']);
 
+                if(!file_exists(path('views') . '/' . $route['view'])) {
+                    $this->error('View does not exist: ' . $route['view']);
+                    return;
+                }
+
                 if($uri === '/') {
                     
                     // create root index.html
                     (new Filesystem)->makeDirectory(path('builds') . '/prod', 0777, true, true);
                     (new Filesystem)->put(path('builds') . '/prod/index.html', view($route['view'], $route['data']));
+
                     
                 } else {
                     
