@@ -3,8 +3,8 @@
 namespace Statix\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use Statix\Routing\RouteRegistrar;
+use Illuminate\Filesystem\Filesystem;
 
 class BuildCommand extends Command
 {
@@ -14,10 +14,14 @@ class BuildCommand extends Command
 
     public function handle()
     {        
+        require path('cwd') . '/routes/web.php';
+        
         $this->info(PHP_EOL . 'Building your site');
         $this->line('============================');
 
         $routes = collect(container()->make(RouteRegistrar::class)->routes);
+
+        var_dump($routes);
         
         $routes->each(function($route, $uri) {
             

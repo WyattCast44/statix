@@ -4,6 +4,7 @@ use Statix\Routing\Route;
 
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/pages/about', 'about')->name('about');
+Route::view('/pages/contact', 'contact')->name('contact');
 
 // Route::define('/blog', function() {
 //     return view('blog.index');

@@ -14,12 +14,7 @@ return [
 
     'paths' => [
         'test-path' => path('cwd') . '/statix.php',
+        'routes' => path('cwd') . '/routes/web.php',
     ],
-
-    'routes' => [
-        
-        //
-
-    ]
 
 ];

@@ -17,10 +17,11 @@ class WatchCommand extends Command
 
         $this->call('build');
 
-        Watch::path(path('views'))
-            ->onAnyChange(function(string $path) {  
-                $this->call('build');
-            })
-            ->start();
+        Watch::paths(
+            path('views'),
+            path('routes'),
+        )->onAnyChange(function(string $path) {  
+            $this->call('build');
+        })->start();
     }
 }

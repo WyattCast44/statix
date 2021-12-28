@@ -252,9 +252,7 @@ class Application
         $this->container->singleton(RouteRegistrar::class, function() {
             return new RouteRegistrar;
         });
-
-        require path('cwd'). '/routes/web.php';
-
+        
         return $this;
     }
 }
