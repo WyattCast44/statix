@@ -2,11 +2,11 @@
 
 @section('body')
 
-    <h1>About Us</h1>
+    <h1>My Blog - Index</h1>
 
     <ul>
         <li><a href="{{ route('welcome') }}">Home</a></li>
-        <li><a href="{{ route('blog.index') }}">Blog</a></li>
+        <li><a href="{{ route('about') }}">About</a></li>
     </ul>
 
 @endsection

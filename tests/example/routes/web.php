@@ -5,9 +5,9 @@ use Statix\Routing\Route;
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/about', 'about')->name('about');
 
-// Route::define('/blog', function() {
-//     return view('blog.index');
-// })->name('blog.index');
+Route::define('/blog', function() {
+    return view('blog.index');
+})->name('blog.index');
 
 // Route::define('/blog/posts', function() {
 // })->name('blog.posts.index');

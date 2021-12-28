@@ -50,7 +50,30 @@ class BuildCommand extends Command
                     (new Filesystem)->put(path('builds') . '/prod/' . $uri . '/index.html', view($route['view'], $route['data']));
 
                 }
+
+                return true;
             }
+
+            if($route['strategy'] === 'handler') {
+                
+                $this->line('Building URI: ' . $uri);
+
+                if($uri === '/') {
+                    
+                    // create root index.html
+                    (new Filesystem)->makeDirectory(path('builds') . '/prod', 0777, true, true);
+                    (new Filesystem)->put(path('builds') . '/prod/index.html', $route['handler']() , $route['data']);
+
+                    
+                } else {
+
+                    (new Filesystem)->makeDirectory(path('builds') . '/prod/' . $uri, 0777, true, true);
+                    (new Filesystem)->put(path('builds') . '/prod/' . $uri . '/index.html', $route['handler'](), $route['data']);
+
+                }
+
+            }
+
         });
 
         container()->make(RouteRegistrar::class)->routes = [];

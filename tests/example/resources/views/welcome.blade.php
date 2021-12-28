@@ -1,6 +1,12 @@
 @extends('layouts.base')
 
 @section('body')
-    <h1>Hello World</h1>
-    <a href="{{ route('about') }}">About us</a>
+
+    <h1>Hello!</h1>
+
+    <ul>
+        <li><a href="{{ route('about') }}">About</a></li>
+        <li><a href="{{ route('blog.index') }}">Blog</a></li>
+    </ul>
+
 @endsection
