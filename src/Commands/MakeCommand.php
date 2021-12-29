@@ -18,7 +18,7 @@ class MakeCommand extends Command
 
         $name = $this->determineName();
 
-        $path = path_join('cwd', '/app/Commands/', $name, '.php');
+        $path = path_join('app_path', '/Commands/', $name, '.php');
 
         $contents = Str::replace('{{ COMMAND_NAME }}', $name, Filesystem::get(__DIR__. '/stubs/Command.stub'));
 

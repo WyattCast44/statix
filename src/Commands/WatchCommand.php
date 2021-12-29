@@ -15,7 +15,12 @@ class WatchCommand extends Command
     {
         $this->info(PHP_EOL . 'Watching your application for changes');
 
-        $this->call('build');
+        try {
+            $this->call('build');
+        } catch (\Throwable $th) {
+            throw $th;
+            exit;
+        }
 
         Watch::paths(
             path('views'),

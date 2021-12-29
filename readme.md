@@ -36,3 +36,14 @@ Statix is a powerful Laravel-esque static site generator.
     - Controller::class (invokable)
     - closure
     - view
+
+# Roadmap
+
+- publishable stubs
+- make test command
+- smart builds
+    - maybe multithread?
+    - maybe single changed page builds (if web.php changes, trigger full rebuild)
+- assets helper
+- copy public folder into build
+- inject page details when building, last edit time, path, etc

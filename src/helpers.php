@@ -60,6 +60,15 @@ if(!function_exists('path_join')) {
 
 }
 
+if(!function_exists('app_path')) {
+
+    function app_path(...$appends): mixed
+    {
+        return container()->make('paths')->get('app_path') . implode('', $appends);
+    }
+
+}
+
 if(!function_exists('view')) {
 
     function view($template, $data = [])
@@ -91,6 +100,10 @@ if(!function_exists('route')) {
                 return $path;
 
             }
+
+        } else {
+
+            throw new Exception('Unknown route: ' . $name);
 
         }
     }

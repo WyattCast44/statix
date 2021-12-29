@@ -2,16 +2,12 @@
 
 use Statix\Routing\Route;
 
-class Invokable
-{
-    public function __invoke()
-    {
-        //
-    }
-}
-
 Route::view('/', 'welcome')->name('welcome');
 Route::view('/about', 'about')->name('about');
+Route::view('/contact', 'contact')->name('contact');
+Route::view('/blog', 'blog', [
+    'posts' => range(1,5),
+])->name('blog.index');
 
 // Route::define('/blog', Invokable::class)->name('blog.index');
 

@@ -10,6 +10,8 @@ use Statix\Commands\MakeCommand;
 use Illuminate\Config\Repository;
 use Illuminate\Events\Dispatcher;
 use Statix\Commands\BuildCommand;
+use Statix\Commands\ServeCommand;
+use Statix\Commands\WatchCommand;
 use NunoMaduro\Collision\Provider;
 use Statix\Commands\MakeComponent;
 use Statix\Routing\RouteRegistrar;
@@ -27,7 +29,6 @@ use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\View\Factory as ViewFactoryContact;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
-use Statix\Commands\WatchCommand;
 
 class Application
 {
@@ -86,6 +87,7 @@ class Application
         $this->paths = tap($this->container->make('paths'), function($repo) {
             $cwd = getcwd();
             $repo->set('cwd', $cwd);
+            $repo->set('app_path', $cwd . '/app');
             $repo->set('env_file', $cwd . '/.env');
             $repo->set('assets', $cwd . '/resources/assets');
             $repo->set('builds', $cwd . '/builds');
@@ -160,6 +162,7 @@ class Application
             MakeCommand::class,
             MakeComponent::class,
             WatchCommand::class,
+            ServeCommand::class,
         ]);
 
         return $this;

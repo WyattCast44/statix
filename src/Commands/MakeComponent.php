@@ -14,7 +14,7 @@ class MakeComponent extends Command
 
    public function handle()
    {
-        Filesystem::ensureDirectoryExists(path_join('cwd', '/app/View/Components'));
+        Filesystem::ensureDirectoryExists(path_join('app_path', '/View/Components'));
 
         $name = $this->determineName();
 
@@ -36,7 +36,7 @@ class MakeComponent extends Command
 
         $viewPath = path_join('views', '/components/', $viewName, '.blade.php');
 
-        $classPath = path_join('cwd', '/app/View/Components/', $className, '.php');
+        $classPath = path_join('app_path', '/View/Components/', $className, '.php');
 
         Filesystem::put($classPath, $classTemplate);
 
