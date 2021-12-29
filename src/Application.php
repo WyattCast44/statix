@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\View\Engines\PhpEngine;
 use Statix\Commands\ClearCompiledViews;
 use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Engines\EngineResolver;
@@ -93,6 +94,7 @@ class Application
             $repo->set('builds', $cwd . '/builds');
             $repo->set('config', $cwd . '/config');
             $repo->set('content', $cwd . '/resources/content');
+            $repo->set('routes', $cwd . '/routes/web.php');
             $repo->set('views', $cwd . '/resources/views');
             $repo->set('view_cache', $cwd . '/builds/_cache/views');
         });
@@ -192,9 +194,11 @@ class Application
 
     private function ensureRequiredPathsExist()
     {
-        collect(['assets', 'builds', 'content', 'views', 'view_cache'])->each(function($path) {
+        collect(['assets', 'builds', 'content', 'routes', 'views', 'view_cache'])->each(function($path) {
             if(!is_dir($this->paths->get($path))) {
-                throw new Exception("The '$path' path must be defined and exist. Current set to: " . $this->paths->get($path));
+                if(!file_exists($this->paths->get($path))) {
+                    throw new Exception("The '$path' path must be defined and exist. Current set to: " . $this->paths->get($path));
+                }
             }
         });
 
@@ -216,6 +220,10 @@ class Application
 
         $viewResolver->register('blade', function() use ($bladeCompiler) {
             return new CompilerEngine($bladeCompiler);
+        });
+
+        $viewResolver->register('php', function() {
+            return new PhpEngine($this->container->make('fs'));
         });
 
         $viewFinder = new FileViewFinder(

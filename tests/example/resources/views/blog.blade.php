@@ -9,10 +9,10 @@
     <ul class="mt-5 space-y-1">
 
         @foreach ($posts as $post)
-            <li><a class="p-2 rounded hover:bg-gray-200 w-full block -mx-2" href="#">
+            <li><a class="p-2 rounded hover:bg-gray-200 w-full block -mx-2 hover:no-underline" href="#">
                 <div>
-                    <h2 class="font-semibold">Post Title #{{ $loop->index }}</h2>
-                    <p class="text-sm">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae nostrum necessitatibus consectetur, quod reprehenderit.</p>
+                    <h2 class="font-semibold">Post Title #{{ $post['id'] }}</h2>
+                    <p class="text-sm">{{ $post['excerpt'] }}</p>
                 </div>
             </a></li>
         @endforeach

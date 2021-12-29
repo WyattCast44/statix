@@ -45,5 +45,59 @@ Statix is a powerful Laravel-esque static site generator.
     - maybe multithread?
     - maybe single changed page builds (if web.php changes, trigger full rebuild)
 - assets helper
+- mix() function to allow for asset versioning
 - copy public folder into build
 - inject page details when building, last edit time, path, etc
+
+# Scratchpad
+
+```php
+
+$finder = tap(new Finder(), function($finder) {
+    $finder->ignoreVCS(true);
+});
+
+$finder->files()->in(path('content'))->name('*.published.md');
+
+$posts = [];
+
+if ($finder->hasResults()) {
+        
+    foreach ($finder as $file) {
+    
+        $object = YamlFrontMatter::parse(file_get_contents($file->getRealPath()));
+
+        array_push($posts, ['body' => $object->body()], $object->matter());
+    
+    }
+}
+
+dd($posts, config('app.env'));
+
+Content::query()
+    ->if(config('app.env') == 'local', function() {
+        return $this->published();
+    });
+
+class Content
+{
+    public static function query()
+    {
+        return new self;
+    }
+
+    public function if($condition, $cb)
+    {
+        if($condition) {
+            $cb();
+        }
+
+        return $this;
+    }
+
+    public function published()
+    {
+        return $this;
+    }
+}
+```

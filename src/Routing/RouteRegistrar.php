@@ -17,7 +17,6 @@ class RouteRegistrar
             'name' => $route->name,
             'view' => $route->view,
             'data' => $route->data,
-            'handler' => $route->handler,
             'sequence' => $route->sequence,
             'strategy' => $route->strategy,
         ];

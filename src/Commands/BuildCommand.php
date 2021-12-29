@@ -10,7 +10,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class BuildCommand extends Command
 {
-    protected $signature = 'build';
+    protected $signature = 'build {name=local}';
 
     protected $description = 'Create a new build of your application';
 
@@ -18,16 +18,16 @@ class BuildCommand extends Command
     {        
         $buildStart = microtime(true);
 
-        $this->info(PHP_EOL . 'Building your site');
+        $this->info(PHP_EOL . 'Building your site (' . $this->argument('name') . ')');
         $this->line('===============================');
 
         require path('cwd') . '/routes/web.php';
 
         $routes = collect(container()->make(RouteRegistrar::class)->routes);
 
-        (new Filesystem)->deleteDirectory(path_join('builds', '/prod'));
+        (new Filesystem)->deleteDirectory(path_join('builds', '/', $this->argument('name')));
 
-        (new Filesystem)->ensureDirectoryExists(path_join('builds', '/prod'), 0777, true);
+        (new Filesystem)->ensureDirectoryExists(path_join('builds', '/', $this->argument('name')), 0777, true);
 
         $this->copyPublicAssetsDirectory();
         
@@ -46,13 +46,19 @@ class BuildCommand extends Command
 
                 if($uri === '/') {
                     
-                    // create root index.html
-                    (new Filesystem)->put(path('builds') . '/prod/index.html', view($route['view'], $route['data']));
+                    (new Filesystem)->put(
+                        path_join('builds', '/', $this->argument('name'), '/index.html'), 
+                        view($route['view'], $route['data'])
+                    );
                     
                 } else {
                     
-                    (new Filesystem)->ensureDirectoryExists(path_join('builds', '/prod/', $uri), 0777, true);
-                    (new Filesystem)->put(path('builds') . '/prod/' . $uri . '/index.html', view($route['view'], $route['data']));
+                    (new Filesystem)->ensureDirectoryExists(path_join('builds', '/', $this->argument('name'), '/', $uri), 0777, true);
+                    
+                    (new Filesystem)->put(
+                        path_join('builds', '/', $this->argument('name'), '/', $uri, '/index.html'), 
+                        view($route['view'], $route['data'])
+                    );
 
                 }
 
@@ -61,29 +67,37 @@ class BuildCommand extends Command
                 return true;
             }
 
-            if($route['strategy'] === 'handler') {
+            if($route['strategy'] === 'sequence') {
                 
-                $this->line('Building URI: ' . $uri);
-                
-                dd(
-                    $route['handler'],
-                    $route['handler'] instanceof Closure, 
-                    class_exists($route['handler']),
-                );
+                $this->error('TODO');
+                return true;
 
-                if($uri === '/') {
-                    
-                    // create root index.html
-                    (new Filesystem)->makeDirectory(path('builds') . '/prod', 0777, true, true);
-                    (new Filesystem)->put(path('builds') . '/prod/index.html', $route['handler']() , $route['data']);
+                // if(gettype($route['sequence']) === 'array') {
 
                     
-                } else {
+                //     foreach ($route['sequence'] as $value) { 
+                //         $start = microtime(true);
 
-                    (new Filesystem)->makeDirectory(path('builds') . '/prod/' . $uri, 0777, true, true);
-                    (new Filesystem)->put(path('builds') . '/prod/' . $uri . '/index.html', $route['handler'](), $route['data']);
+                //         $resource = substr(
+                //             $uri, 
+                //             strpos($uri, '{') + 1, 
+                //             strlen(substr($uri, strpos($uri, '}'))) - 1
+                //         );
+                        
+                //         extract([$resource]);
+                        
+                //         // dd([$resource => $value]);
 
-                }
+                //         $this->line('Building URI: ' . substr_replace($uri, $value, strpos($uri, '{'), strpos($uri, '}')) . ' (' . round(microtime(true) - $start, 4) . ')');
+                //     }
+
+                // }
+
+                // if($route['sequence'] instanceof Closure) {
+                //     //
+                // }
+
+                // return true;
 
             }
 
@@ -99,7 +113,7 @@ class BuildCommand extends Command
     {
         $start = microtime(true);
         
-        (new Filesystem)->copyDirectory(path_join('assets', '/public'), path_join('builds', '/prod'));
+        (new Filesystem)->copyDirectory(path_join('assets', '/public'), path_join('builds', '/', $this->argument('name')));
 
         $this->line('Copying public folder (' . round(microtime(true) - $start, 4) . ')');
     }

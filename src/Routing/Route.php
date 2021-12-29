@@ -6,21 +6,10 @@ class Route
 {
     public $uri;
     public $view;
-    public $handler;
     public $data;
     public $name;
     public $sequence;
     public $strategy;
-
-    public static function define($uri, $handler, $data = []): Route
-    {
-        return tap($instance = new self, function($instance) use ($uri, $handler, $data) {
-            $instance->uri = $uri;
-            $instance->handler = $handler;
-            $instance->data = $data;
-            $instance->strategy = 'handler';
-        });
-    }
 
     public static function view($uri, $view, $data = []): Route
     {
@@ -29,6 +18,16 @@ class Route
             $instance->view = $view;
             $instance->data = $data;
             $instance->strategy = 'view';
+        });
+    }
+
+    public static function sequence($uri, $view, $sequence = []): Route
+    {
+        return tap($instance = new self, function($instance) use ($uri, $view, $sequence) {
+            $instance->uri = $uri;
+            $instance->view = $view;
+            $instance->sequence = $sequence;
+            $instance->strategy = 'sequence';
         });
     }
 

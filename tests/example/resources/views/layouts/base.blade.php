@@ -6,9 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="description" content="{{ config('meta.description', 'Example description') }}">
     <title>{{ config('meta.title', 'Example Title') }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="http://localhost:8080/css/app.css">
+    <script src="http://localhost:8080/js/app.js" defer></script>
 </head>
-<body class="bg-gray-100 font-sans text-gray-900">
+<body class="bg-gray-100 font-sans text-gray-900 selection:bg-gray-300">
     
     <div class="max-w-2xl sm:mx-auto mx-4 my-5 sm:my-10 md:my-16">
 

@@ -1,7 +1,11 @@
 <?php
 
 use Statix\Application;
+use Symfony\Component\Finder\Finder;
+use Spatie\YamlFrontMatter\YamlFrontMatter;
 
 require_once './../../vendor/autoload.php';
 
-Application::new()->cli->run();
+$app = Application::new();
+
+$app->cli->run();

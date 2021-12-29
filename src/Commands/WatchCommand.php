@@ -25,6 +25,7 @@ class WatchCommand extends Command
         Watch::paths(
             path('views'),
             path('routes'),
+            path('assets'),
         )->onAnyChange(function(string $path) {  
             $this->call('build');
         })->start();

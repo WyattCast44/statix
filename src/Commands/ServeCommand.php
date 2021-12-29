@@ -8,14 +8,16 @@ use Symfony\Component\Process\PhpExecutableFinder;
 
 class ServeCommand extends Command
 {
-    protected $signature = 'serve {build=prod} {port=8080}';
+    protected $signature = 'serve {build=local} {port=8080}';
 
     protected $description = 'Serve your application build with builtin PHP server';
 
     public function handle()
     {
         try {
-            $this->call('build');
+            $this->call('build', [
+                'name' => $this->argument('build'),
+            ]);
         } catch (\Throwable $th) {
             throw $th;
             exit;
@@ -24,7 +26,7 @@ class ServeCommand extends Command
         $path = path_join('builds', '/', $this->argument('build'));
 
         $this->info(PHP_EOL . 'Starting development server');
-        $this->line('===========================');
+        $this->line('===============================');
         $this->line('Build: ' . $path);
         $this->line('URL: ' . 'http://localhost:' . $this->argument('port'));
 
