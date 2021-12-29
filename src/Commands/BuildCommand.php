@@ -8,8 +8,6 @@ use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Filesystem\Filesystem;
 
-use function PHPSTORM_META\type;
-
 class BuildCommand extends Command
 {
     protected $signature = 'build';

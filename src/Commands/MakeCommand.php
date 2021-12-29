@@ -3,20 +3,32 @@
 namespace Statix\Commands;
 
 use Illuminate\Support\Str;
+use Statix\Support\Filesystem;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 
 class MakeCommand extends Command
 {
     protected $signature = 'make:command {name?}';
 
-    protected $description = 'Create a new Artisan command';
+    protected $description = 'Create a new cli command';
 
     public function handle()
     {        
-        (new Filesystem)
-            ->makeDirectory(path('cwd') . '/app/Commands', 0777, true, true);
+        Filesystem::ensureDirectoryExists(path_join('cwd', '/app/Commands'));
 
+        $name = $this->determineName();
+
+        $path = path_join('cwd', '/app/Commands/', $name, '.php');
+
+        $contents = Str::replace('{{ COMMAND_NAME }}', $name, Filesystem::get(__DIR__. '/stubs/Command.stub'));
+
+        Filesystem::put($path, $contents);
+        
+        $this->info(PHP_EOL . 'Command created: ' . $path);
+    }
+
+    private function determineName(): string
+    {
         $name = $this->argument('name');
 
         if(!$name) {
@@ -25,17 +37,9 @@ class MakeCommand extends Command
 
         if(empty($name)) {
             $this->error('The command must have a name, please try again.');
-            return;
+            exit;
         }
 
-        $name = Str::studly($name);
-
-        (new Filesystem)
-            ->put(
-                $path = path('cwd') . '/app/Commands/' . $name . '.php', 
-                Str::replace('{{ COMMAND_NAME }}', $name, (new Filesystem)->get( __DIR__ . '/stubs/Command.stub'))
-            );
-        
-        $this->info('Command created, ' . $path);
+        return Str::studly($name);
     }
 }

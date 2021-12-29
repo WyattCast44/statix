@@ -3,8 +3,8 @@
 namespace Statix\Commands;
 
 use Illuminate\Support\Str;
+use Statix\Support\Filesystem;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 
 class MakeComponent extends Command
 {
@@ -14,9 +14,41 @@ class MakeComponent extends Command
 
    public function handle()
    {
-        (new Filesystem)
-            ->makeDirectory(path('cwd') . '/app/View/Components', 0777, true, true);
+        Filesystem::ensureDirectoryExists(path_join('cwd', '/app/View/Components'));
 
+        $name = $this->determineName();
+
+        $viewName = Str::slug($name);
+
+        $className = Str::studly($name);
+
+        $classTemplate = Str::replace(
+            '{{ CLASS_NAME }}', 
+            $className, 
+            Filesystem::get( __DIR__ . '/stubs/Component.stub')
+        );
+
+        $classTemplate = Str::replace(
+            '{{ VIEW_NAME }}', 
+            $viewName, 
+            $classTemplate
+        );
+
+        $viewPath = path_join('views', '/components/', $viewName, '.blade.php');
+
+        $classPath = path_join('cwd', '/app/View/Components/', $className, '.php');
+
+        Filesystem::put($classPath, $classTemplate);
+
+        Filesystem::put($viewPath, Filesystem::get(__DIR__ . '/stubs/view.stub'));
+
+        $this->info(PHP_EOL . 'Component created!' . PHP_EOL);
+        $this->info('Class: ' . $classPath);
+        $this->info('View: ' . $viewPath);
+   }
+
+   private function determineName(): string
+   {
         $name = $this->argument('name');
 
         if(!$name) {
@@ -25,30 +57,9 @@ class MakeComponent extends Command
 
         if(empty($name)) {
             $this->error('The component must have a name, please try again.');
-            return;
+            exit;
         }
 
-        $className = Str::studly($name);
-        $viewName = Str::slug($name);
-
-        $template = Str::replace('{{ CLASS_NAME }}', $className, (new Filesystem)->get( __DIR__ . '/stubs/Component.stub'));
-
-        $template = Str::replace('{{ VIEW_NAME }}', $viewName, $template);
-
-        (new Filesystem)
-            ->put(
-                $classPath = path('cwd') . '/app/View/Components/' . $className . '.php', 
-                $template,
-            );
-
-        (new Filesystem)
-            ->put(
-                $viewPath = path('views') . '/components/' . $viewName . '.blade.php', 
-                (new Filesystem)->get( __DIR__ . '/stubs/view.stub'),
-            );
-        
-        $this->info(PHP_EOL . 'Component created!' . PHP_EOL);
-        $this->info('Class: ' . $classPath);
-        $this->info('View: ' . $viewPath);
+        return $name;
    }
 }

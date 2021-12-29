@@ -51,6 +51,15 @@ if(!function_exists('path')) {
 
 }
 
+if(!function_exists('path_join')) {
+
+    function path_join($key, ...$appends): mixed
+    {
+        return container()->make('paths')->get($key) . implode('', $appends);
+    }
+
+}
+
 if(!function_exists('view')) {
 
     function view($template, $data = [])
