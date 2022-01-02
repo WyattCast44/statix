@@ -2,10 +2,13 @@
 
 namespace Statix\Routing;
 
+use Illuminate\Support\Str;
+
 class Route
 {
     public $uri;
     public $view;
+    public $view_path;
     public $data;
     public $name;
     public $sequence;
@@ -16,6 +19,7 @@ class Route
         return tap($instance = new self, function($instance) use ($uri, $view, $data) {
             $instance->uri = $uri;
             $instance->view = $view;
+            $instance->view_path = path_join('views', '/', Str::replace('.', '/', $view) . '.blade.php');
             $instance->data = $data;
             $instance->strategy = 'view';
         });
@@ -26,6 +30,7 @@ class Route
         return tap($instance = new self, function($instance) use ($uri, $view, $sequence) {
             $instance->uri = $uri;
             $instance->view = $view;
+            $instance->view_path = path_join('views', '/', Str::replace('.', '/', $view) . '.blade.php');
             $instance->sequence = $sequence;
             $instance->strategy = 'sequence';
         });

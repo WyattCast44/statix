@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Filesystem\Filesystem;
-use Statix\Actions\BuildRouteUsingViewStrategy;
+use Statix\Actions\BuildRouteFromView;
 
 class BuildCommand extends Command
 {
@@ -15,16 +15,11 @@ class BuildCommand extends Command
     protected $signature = 'build {name=local}';
 
     protected $description = 'Create a new build of your application';
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->buildStart = microtime(true);
-    }
     
     public function handle()
     { 
+        $this->buildStart = microtime(true);
+
         $this->info(PHP_EOL . 'Building your site (' . $this->argument('name') . ')');
         $this->line('===============================');
 
@@ -42,43 +37,9 @@ class BuildCommand extends Command
         collect(container()->make(RouteRegistrar::class)->routes)->each(function($route, $uri) {
             
             if($route['strategy'] === 'view'):
-                
-                $start = microtime(true);
 
-                // build up the path to the view source
-                $path = path_join('views', '/', Str::replace('.', '/', $this->route['view']), '.blade.php');
-
-                // ensure the view actually exists
-                if(!file_exists($path)) {
-                    $this->error('View does not exist: ' . $this->route['view'] . PHP_EOL);
-                    return true;
-                }
-
-                // check if we are builing the site root index.html
-                // if not need to build out directories for nice names
-                if($uri === '/') {
-        
-                    // write the static page to file
-                    (new Filesystem)->put(
-                        path_join('builds', '/', $this->argument('name'), '/index.html'), 
-                        view($route['view'], $route['data'])
-                    );
-                    
-                } else {
-                    
-                    // ensure the directory exists
-                    (new Filesystem)->ensureDirectoryExists(path_join('builds', '/', $this->argument('name'), '/', $uri), 0777, true);
-                    
-                    // write the static page to file
-                    (new Filesystem)->put(
-                        path_join('builds', '/', $this->argument('name'), '/', $uri, '/index.html'), 
-                        view($route['view'], $route['data'])
-                    );
-
-                }
-
-                $this->line('Building URI: ' . $uri . ' (' . round(microtime(true) - $start, 4) . 's)');
-
+                (new BuildRouteFromView($this, $route))->execute();
+            
                 return true;
 
             endif;
@@ -120,6 +81,8 @@ class BuildCommand extends Command
         });
 
         container()->make(RouteRegistrar::class)->routes = [];
+
+        $this->comment('Build time: ' . round(microtime(true) - $this->buildStart, 4) . 's');
     }
 
     private function copyPublicAssetsDirectory()
@@ -129,10 +92,5 @@ class BuildCommand extends Command
         (new Filesystem)->copyDirectory(path_join('assets', '/public'), path_join('builds', '/', $this->argument('name')));
 
         $this->line('Copying public folder (' . round(microtime(true) - $start, 4) . ')');
-    }
-
-    public function __destruct()
-    {
-        $this->comment('Build time: ' . round(microtime(true) - $this->buildStart, 4) . 's');
     }
 }
