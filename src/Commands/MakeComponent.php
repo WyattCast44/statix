@@ -15,6 +15,7 @@ class MakeComponent extends Command
    public function handle()
    {
         Filesystem::ensureDirectoryExists(path_join('app_path', '/View/Components'));
+        Filesystem::ensureDirectoryExists(path_join('views', '/components'));
 
         $name = $this->determineName();
 

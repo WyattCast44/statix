@@ -163,8 +163,8 @@ class Application
             ClearCompiledViews::class,
             MakeCommand::class,
             MakeComponent::class,
-            WatchCommand::class,
             ServeCommand::class,
+            WatchCommand::class,
         ]);
 
         return $this;
@@ -173,9 +173,7 @@ class Application
     private function ensureUserCommandsAreRegistered()
     {
         if($this->config->has('app.commands')) {
-            collect($this->config->get('app.commands', []))->each(function($command) {
-                $this->cli->resolve($command);
-            });
+            $this->cli->resolveCommands($this->config->get('app.commands', []));
         }
 
         return $this;

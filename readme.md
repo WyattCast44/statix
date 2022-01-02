@@ -45,9 +45,12 @@ Statix is a powerful Laravel-esque static site generator.
     - maybe multithread?
     - maybe single changed page builds (if web.php changes, trigger full rebuild)
 - assets helper
-- mix() function to allow for asset versioning
-- copy public folder into build
+- mix() function to allow for asset versioning - need to grok mix-manifest.json
+- copy public folder into build smartly
 - inject page details when building, last edit time, path, etc
+- hotreload when 
+    - env files change
+    - config files change, reload config
 
 # Scratchpad
 

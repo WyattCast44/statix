@@ -35,3 +35,20 @@ Route::view('/blog', 'blog', [
         
 //     ];
 // })->name('posts.show');
+
+/**
+ * Notes
+ * - while registering with registrar, check if has dynamic portions, if so and no sequence is given raise error
+*/ 
+
+// view
+// Route::define('/uri', 'view.name')->name('invokable.controller.example');
+// Route::define('/uri/{post:slug}', 'view.name')->sequence($data)->name('invokable.controller.example');
+
+// invokable controller
+// Route::define('/uri', InvokableController::class)->name('invokable.controller.example');
+// Route::define('/uri/{post:slug}', InvokableController::class)->sequence($data)->name('invokable.controller.example');
+
+// normal controller 
+// Route::define('/uri', [NormalContoller::class, 'method'])->name('normal.controller.example');
+// Route::define('/uri/{post:slug}', [NormalContoller::class, 'method'])->sequence($data)->name('normal.controller.example');
