@@ -3,6 +3,7 @@
 namespace Statix\Commands;
 
 use Spatie\Watcher\Watch;
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 
 class WatchCommand extends Command
@@ -26,8 +27,17 @@ class WatchCommand extends Command
             path('views'),
             path('routes'),
             path('assets'),
-        )->onAnyChange(function(string $path) {  
+            path('config'),
+        )->onAnyChange(function(string $type, string $path) {  
+
+            if(Str::startsWith($path, path('config'))) {
+                $this->info(PHP_EOL . 'Reloading config files');
+
+                app()->reloadConfigFiles();
+            }
+
             $this->call('build');
+
         })->start();
     }
 }

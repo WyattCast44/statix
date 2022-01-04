@@ -2,11 +2,10 @@
 
 namespace Statix\Actions;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 
-class BuildRouteFromView extends BaseAction
+class BuildRouteFromView
 {
     protected $cli;
 
@@ -34,23 +33,23 @@ class BuildRouteFromView extends BaseAction
         if($this->route['uri'] === '/') {
 
             // write the static page to file
-            (new Filesystem)->put(
-                path_join('builds', '/', $this->cli->argument('name'), '/index.html'), 
+            File::put(
+                path_build('builds', $this->cli->argument('name'), 'index.html'), 
                 view($this->route['view'], $this->route['data'])
             );
             
         } else {
             
             // ensure the directory exists
-            (new Filesystem)->ensureDirectoryExists(
-                path_join('builds', '/', $this->cli->argument('name'), '/', $this->route['uri']), 
+            File::ensureDirectoryExists(
+                path_build('builds', $this->cli->argument('name'), $this->route['uri']), 
                 0777, 
                 true
             );
             
             // write the static page to file
-            (new Filesystem)->put(
-                path_join('builds', '/', $this->cli->argument('name'), '/', $this->route['uri'], '/index.html'), 
+            File::put(
+                path_build('builds', $this->cli->argument('name'), $this->route['uri'], 'index.html'), 
                 view($this->route['view'], $this->route['data'])
             );
 

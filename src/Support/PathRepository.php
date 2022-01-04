@@ -43,4 +43,14 @@ class PathRepository
 
         throw new Exception("Cannot overide path key: $key, currently set to: " . $this->paths[$key]);
     }
+
+    /**
+     * Check if path exists
+     * 
+     * @return bool
+     */
+    public function has($key): bool
+    {
+        return array_key_exists($key, $this->paths);
+    }
 }

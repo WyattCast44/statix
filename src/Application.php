@@ -6,6 +6,7 @@ use Exception;
 use Dotenv\Dotenv;
 use Statix\Support\Container;
 use Illuminate\Console\Command;
+use Statix\Commands\ClearBuilds;
 use Statix\Commands\MakeCommand;
 use Illuminate\Config\Repository;
 use Illuminate\Events\Dispatcher;
@@ -99,6 +100,8 @@ class Application
             $repo->set('view_cache', $cwd . '/builds/_cache/views');
         });
 
+        $this->container->instance(PathRepository::class, $this->paths);
+
         return $this;
     }
 
@@ -117,20 +120,41 @@ class Application
             
             $path = $this->paths->get('config');
 
-            $items = collect(scandir($path))
-                ->reject(function ($file) {
-                    return is_dir($file);
-                })->reject(function ($file) {
-                    return (pathinfo($file)['extension'] != 'php');
-                })->mapWithKeys(function ($file) use ($path) {
-                    return [basename($file, '.php') => require $path . '/' . $file];
-                })->toArray();
+            // $items = collect(scandir($path))
+            //     ->reject(function ($file) {
+            //         return is_dir($file);
+            //     })->reject(function ($file) {
+            //         return (pathinfo($file)['extension'] != 'php');
+            //     })->mapWithKeys(function ($file) use ($path) {
+            //         return [basename($file, '.php') => require $path . '/' . $file];
+            //     })->toArray();
 
-            return new Repository($items);
+            // return new Repository($items);
+            return new Repository();
 
         });
 
         $this->config = $this->container->make('config');
+
+        $this->reloadConfigFiles();
+
+        return $this;
+    }
+
+    public function reloadConfigFiles()
+    {
+        $path = $this->paths->get('config');
+
+        $items = collect(scandir($path))
+            ->reject(function ($file) {
+                return is_dir($file);
+            })->reject(function ($file) {
+                return (pathinfo($file)['extension'] != 'php');
+            })->mapWithKeys(function ($file) use ($path) {
+                return [basename($file, '.php') => require $path . '/' . $file];
+            })->toArray();
+
+        $this->config->set($items);
 
         return $this;
     }
@@ -160,6 +184,7 @@ class Application
     {
         $this->cli->resolveCommands([
             BuildCommand::class,
+            ClearBuilds::class,
             ClearCompiledViews::class,
             MakeCommand::class,
             MakeComponent::class,
@@ -192,7 +217,7 @@ class Application
 
     private function ensureRequiredPathsExist()
     {
-        collect(['assets', 'builds', 'content', 'routes', 'views', 'view_cache'])->each(function($path) {
+        collect(['assets', 'builds', 'content', 'routes', 'views'])->each(function($path) {
             if(!is_dir($this->paths->get($path))) {
                 if(!file_exists($this->paths->get($path))) {
                     throw new Exception("The '$path' path must be defined and exist. Current set to: " . $this->paths->get($path));
@@ -205,14 +230,14 @@ class Application
 
     private function ensureBladeEngineIsConfigured()
     {
-        $this->container->bind('fs', function() {
+        $this->container->bind('files', function() {
             return new Filesystem;
         });
 
         $viewResolver = new EngineResolver;
 
         $bladeCompiler = new BladeCompiler(
-            $this->container->make('fs'),
+            $this->container->make('files'),
             $this->paths->get('view_cache'),
         );
 
@@ -221,12 +246,12 @@ class Application
         });
 
         $viewResolver->register('php', function() {
-            return new PhpEngine($this->container->make('fs'));
+            return new PhpEngine($this->container->make('files'));
         });
 
         $viewFinder = new FileViewFinder(
-            $this->container->make('fs'),
-            [$this->paths->get('views')]
+            $this->container->make('files'),
+            [$this->paths->get('views'), $this->paths->get('content')]
         );
 
         $viewFactory = tap(new ViewFactory(

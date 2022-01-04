@@ -534,16 +534,6 @@ a:hover {
           text-decoration-line: underline;
 }
 
-.selection\:bg-gray-500 *::-moz-selection {
-  --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
-}
-
-.selection\:bg-gray-500 *::selection {
-  --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
-}
-
 .selection\:bg-gray-300 *::-moz-selection {
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity));
@@ -552,16 +542,6 @@ a:hover {
 .selection\:bg-gray-300 *::selection {
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity));
-}
-
-.selection\:bg-gray-500::-moz-selection {
-  --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
-}
-
-.selection\:bg-gray-500::selection {
-  --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
 .selection\:bg-gray-300::-moz-selection {

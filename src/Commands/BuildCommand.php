@@ -2,10 +2,10 @@
 
 namespace Statix\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 use Statix\Actions\BuildRouteFromView;
 
 class BuildCommand extends Command
@@ -24,10 +24,10 @@ class BuildCommand extends Command
         $this->line('===============================');
 
         // Clear out any old build of the same name
-        (new Filesystem)->deleteDirectory(path_join('builds', '/', $this->argument('name')));
+        File::deleteDirectory(path_build('builds', $this->argument('name')));
 
         // Ensure build directory exists
-        (new Filesystem)->ensureDirectoryExists(path_join('builds', '/', $this->argument('name')), 0777, true);
+        File::ensureDirectoryExists(path_build('builds', $this->argument('name')), 0777, true);
 
         // Copy any public assets, css, js, favicon, etc
         $this->copyPublicAssetsDirectory();
@@ -89,7 +89,7 @@ class BuildCommand extends Command
     {
         $start = microtime(true);
         
-        (new Filesystem)->copyDirectory(path_join('assets', '/public'), path_join('builds', '/', $this->argument('name')));
+        File::copyDirectory(path_build('assets', 'public'), path_build('builds', $this->argument('name')));
 
         $this->line('Copying public folder (' . round(microtime(true) - $start, 4) . ')');
     }

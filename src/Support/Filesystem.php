@@ -24,5 +24,5 @@ class Filesystem
     public static function get($path, $lock = false)
     {
         return static::new()->get($path, $lock);
-    }
+    }    
 }
