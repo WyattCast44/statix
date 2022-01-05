@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 
 class WatchCommand extends Command
 {
-    protected $signature = 'watch';
+    protected $signature = 'watch {build=local}';
 
     protected $description = 'Watch your application resources and rebuild when any changes are made';
 
@@ -17,7 +17,9 @@ class WatchCommand extends Command
         $this->info(PHP_EOL . 'Watching your application for changes');
 
         try {
-            $this->call('build');
+            $this->call('build', [
+                'name' => $this->argument('build'),
+            ]);
         } catch (\Throwable $th) {
             throw $th;
             exit;
@@ -36,7 +38,9 @@ class WatchCommand extends Command
                 app()->reloadConfigFiles();
             }
 
-            $this->call('build');
+            $this->call('build', [
+                'name' => $this->argument('build'),
+            ]);
 
         })->start();
     }

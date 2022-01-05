@@ -89,7 +89,7 @@ class BuildCommand extends Command
     {
         $start = microtime(true);
         
-        File::copyDirectory(path_build('assets', 'public'), path_build('builds', $this->argument('name')));
+        File::copyDirectory(path('public'), path_build('builds', $this->argument('name')));
 
         $this->line('Copying public folder (' . round(microtime(true) - $start, 4) . ')');
     }

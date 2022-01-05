@@ -3,11 +3,11 @@ let mix = require('laravel-mix');
 // config
 mix
     .disableSuccessNotifications()
-    .setPublicPath("resources/assets/public");
+    .setPublicPath("resources/public");
 
 // assets
 mix
-    .js("resources/assets/js/app.js", "resources/assets/public/js")
-    .postCss("resources/assets/css/app.css", "resources/assets/public/css", [
+    .js("resources/assets/js/app.js", "resources/public/js")
+    .postCss("resources/assets/css/app.css", "resources/public/css", [
         require("tailwindcss"),
     ]);

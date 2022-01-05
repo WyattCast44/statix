@@ -95,6 +95,7 @@ class Application
             $repo->set('builds', $cwd . '/builds');
             $repo->set('config', $cwd . '/config');
             $repo->set('content', $cwd . '/resources/content');
+            $repo->set('public', $cwd . '/resources/public');
             $repo->set('routes', $cwd . '/routes/web.php');
             $repo->set('views', $cwd . '/resources/views');
             $repo->set('view_cache', $cwd . '/builds/_cache/views');
@@ -117,21 +118,7 @@ class Application
     private function ensureConfigIsBindedAndLoaded()
     {
         $this->container->singleton('config', function() {
-            
-            $path = $this->paths->get('config');
-
-            // $items = collect(scandir($path))
-            //     ->reject(function ($file) {
-            //         return is_dir($file);
-            //     })->reject(function ($file) {
-            //         return (pathinfo($file)['extension'] != 'php');
-            //     })->mapWithKeys(function ($file) use ($path) {
-            //         return [basename($file, '.php') => require $path . '/' . $file];
-            //     })->toArray();
-
-            // return new Repository($items);
             return new Repository();
-
         });
 
         $this->config = $this->container->make('config');
