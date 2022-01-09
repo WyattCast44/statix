@@ -1,6 +1,8 @@
 # Statix SSG ⚔
 
-Statix is a powerful Laravel-esque static site generator.
+Statix is a powerful Laravel-esque static site generator. 
+
+Forged by skilled Laravel Artisans with the power of PHP, wielding the Blade, to Illuminate the generation of static sites.
 
 # Features
 
