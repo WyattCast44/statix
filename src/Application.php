@@ -11,13 +11,16 @@ use Statix\Commands\MakeCommand;
 use Illuminate\Config\Repository;
 use Illuminate\Events\Dispatcher;
 use Statix\Commands\BuildCommand;
+use Statix\Commands\MakeProvider;
 use Statix\Commands\ServeCommand;
 use Statix\Commands\WatchCommand;
 use NunoMaduro\Collision\Provider;
 use Statix\Commands\MakeComponent;
+use Illuminate\Support\Collection;
 use Statix\Routing\RouteRegistrar;
 use Statix\Support\PathRepository;
 use Illuminate\View\FileViewFinder;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -42,6 +45,8 @@ class Application
 
     public ConsoleApplication $cli;
 
+    public Collection $providers;
+
     public function __construct()
     {
         (new Provider)->register();
@@ -52,11 +57,13 @@ class Application
             ->ensureEnvFilesAreLoaded()
             ->ensureConfigIsBindedAndLoaded()
             ->ensureCliApplicationIsBinded()
+            ->ensureServiceProvidersAreRegistered()
+            ->ensureServiceProvidersAreBooted()
             ->ensureDefaultCommandsAreRegistered()
             ->ensureUserCommandsAreRegistered()
             ->ensureUserPathsAreRegistered()
-            ->ensureRequiredPathsExist()
             ->ensureBladeEngineIsConfigured()
+            ->ensureRequiredPathsExist()
             ->ensureRouteRegistrarIsBinded();
     }
 
@@ -167,6 +174,49 @@ class Application
         return $this;
     }
 
+    public function ensureServiceProvidersAreRegistered()
+    {
+        $path = $this->paths->get('app_path') . '/Providers';
+
+        if(!is_dir($path)) {
+            $this->providers = collect();
+
+            return $this;
+        }
+
+        $items = collect(scandir($path))
+            ->reject(function ($file) {
+                return is_dir($file);
+            })->reject(function ($file) {
+                return (pathinfo($file)['extension'] != 'php');
+            })->map(function($file) {
+                $class = "App\\Providers\\" . basename($file, '.php');
+                
+                $obj = new $class($this->container);
+
+                if(method_exists($obj, 'register')) {
+                    $obj->register();
+                }
+
+                return $obj;
+            });
+
+        $this->providers = $items;
+
+        return $this;
+    }
+
+    public function ensureServiceProvidersAreBooted()
+    {
+        $this->providers->each(function ($provider) {
+            if(method_exists($provider, 'boot')) {
+                $provider->boot();
+            }
+        });
+
+        return $this;
+    }
+
     private function ensureDefaultCommandsAreRegistered()
     {
         $this->cli->resolveCommands([
@@ -175,6 +225,7 @@ class Application
             ClearCompiledViews::class,
             MakeCommand::class,
             MakeComponent::class,
+            MakeProvider::class,
             ServeCommand::class,
             WatchCommand::class,
         ]);
@@ -220,6 +271,8 @@ class Application
         $this->container->bind('files', function() {
             return new Filesystem;
         });
+
+        File::ensureDirectoryExists($this->paths->get('view_cache'));
 
         $viewResolver = new EngineResolver;
 

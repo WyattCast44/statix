@@ -123,3 +123,13 @@ if(!function_exists('route')) {
     }
 
 }
+
+if(!function_exists('asset')) {
+
+    function asset($path)
+    {
+        return config('app.url', 'http://localhost:8080') . '/' . $path;
+    }
+
+}
+
