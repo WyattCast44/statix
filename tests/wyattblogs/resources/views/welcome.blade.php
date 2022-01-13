@@ -4,10 +4,14 @@
 
 @section('body')
 
-    <div class="w-full prose-lg prose-invert max-w-none prose-p:mb-2">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae quasi nemo impedit non soluta? Quam consequatur eum doloremque perspiciatis eligendi, ullam aspernatur vitae, rem nostrum tempore error numquam? Ab, eos.</p>
+    <div class="w-full p-8 prose-xl rounded bg-opacity-80 prose-invert max-w-none prose-p:mb-2 prose-h2:mb-4 bg-slate-900">
 
-        <p>Lorem ipsum dolor sit amet consectetur <a href="#">adipisicing elit</a>. Doloribus mollitia, necessitatibus quibusdam in eum excepturi ut fuga impedit magnam omnis! Quam eum placeat eos repellendus vitae maiores voluptatum asperiores illum?</p>
+        <h2>Greetings,</h2>
+
+        <p>
+            Welcome to my home on the information super highway. I'm Wyatt, the creator of this space - I'm a full stack web developer 🥞, future space traveler 👨‍🚀, and  father 🐣. I like gifs, dogs 🐕‍🦺, and nice dark editor theme 👨‍💻.
+        </p>
+        
     </div>
     
 @endsection

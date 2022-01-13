@@ -5,3 +5,7 @@
 a:hover {
     @apply underline;
 }
+
+a {
+    @apply text-indigo-200;
+}
