@@ -17,48 +17,36 @@
     </div>
 
     <div>
-        <img src="{{ asset('art/green-planet-md.svg') }}" class="absolute animate-wiggle top-[24px] right-[34px] w-auto h-12">
+        <img src="{{ asset('art/green-planet-md.svg') }}" class="absolute animate-wiggle top-[18px] md:top-[24px] right-[20px] md:right-[34px] w-auto md:h-12 h-8">
     </div>
 
     <div class="relative z-50">
 
         <div class="max-w-2xl mx-4 my-5 sm:mx-auto sm:my-10 md:my-16">
     
-            <header class="flex items-center justify-between pb-5 mb-5">
+            <header class="flex-col pb-5 mb-5 space-y-4 md:space-y-0 md:flex md:flex-row md:items-center md:justify-between">
     
-                <div class="flex items-center space-x-4 text-3xl font-bold">
+                <a href="{{ route('welcome') }}" class="inline-flex items-center space-x-4 text-3xl font-bold text-gray-100 hover:no-underline">
                     <img src="{{ asset('art/moon-gray-lg.svg') }}" alt="" class="w-auto h-16 select-none animate-[spin_10s_ease-in-out_infinite] drop-shadow">
                     <h1 class="drop-shadow">
                         Wyatt's Blog 
                     </h1>
-                </div>
+                </a>
         
-                <ul class="flex items-center space-x-3 text-lg">
+                <ul class="flex items-center justify-end space-x-3 text-lg">
                     <li><a href="{{ route('welcome') }}" class="transition duration-75 hover:bg-indigo-600 px-2.5 py-1.5 hover:no-underline hover:bg-opacity-50">Home</a></li>
-                    <li><a href="{{ route('about') }}" class="transition duration-75 hover:bg-indigo-600 px-2.5 py-1.5 hover:no-underline hover:bg-opacity-50">About Us</a></li>
-                    <li><a href="{{ route('contact') }}" class="transition duration-75 hover:bg-indigo-600 px-2.5 py-1.5 hover:no-underline hover:bg-opacity-50">Contact Us</a></li>
+                    <li><a href="{{ route('blog.index') }}" class="transition duration-75 hover:bg-indigo-600 px-2.5 py-1.5 hover:no-underline hover:bg-opacity-50">Blog</a></li>
+                    <li><a href="{{ route('about') }}" class="transition duration-75 hover:bg-indigo-600 px-2.5 py-1.5 hover:no-underline hover:bg-opacity-50">About</a></li>
                 </ul>
                 
             </header>
     
             @yield('body')
     
-            {{-- <footer class="pt-5 mt-5 border-t border-gray-300">
-    
-                <ul class="flex items-center space-x-5 text-sm">
-                    <li><a href="{{ route('welcome') }}">Home</a></li>
-                    <li><a href="{{ route('blog.index') }}">Blog</a></li>
-                    <li><a href="{{ route('about') }}">About Us</a></li>
-                    <li><a href="{{ route('contact') }}">Contact Us</a></li>
-                    <img src="{{ asset('art/flaming-astroid.svg') }}" alt="" class="w-auto h-12 select-none">
-                </ul>
-    
-            </footer> --}}
-    
             <div class="fixed bottom-0 right-0">
-                <img src="{{ asset('art/rocket.svg') }}" alt="" class="relative h-16 top-[139px] left-[200px]">
-                <img src="{{ asset('art/astronaut.svg') }}" alt="" class="relative h-24 top-[15px] left-[90px] -skew-x-2 drop-shadow-lg" x-data x-on:click="$el.classList.toggle('animate-bounce')">
-                <img src="{{ asset('art/peak-group.svg') }}" alt="" class="w-80 drop-shadow-xl">
+                <img src="{{ asset('art/rocket.svg') }}" alt="" class="relative md:h-16 h-10 top-[85px] left-[100px] md:top-[140px] md:left-[250px]">
+                <img src="{{ asset('art/astronaut.svg') }}" alt="" class="relative md:h-24 h-16 md:top-[15px] top-[8px] md:left-[90px] left-[25px] -skew-x-2 drop-shadow-lg" x-data x-on:click="$el.classList.toggle('animate-bounce')">
+                <img src="{{ asset('art/peak-group.svg') }}" alt="" class="w-36 md:w-80 drop-shadow-xl">
             </div>
     
         </div>

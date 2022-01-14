@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Wyatt Blogs',
+    'title' => "Wyatt's Blog",
     
     'description' => 'My home on the interwebs.',
 

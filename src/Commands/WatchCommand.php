@@ -18,6 +18,15 @@ class WatchCommand extends Command
     {
         $this->info(PHP_EOL . 'Watching your application for changes');
 
+        try {
+            $this->call('build', [
+                'name' => $this->argument('build'),
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+            exit;
+        }
+
         if($this->option('serve')) {
 
             $path = path_join('builds', '/', $this->argument('build'));
