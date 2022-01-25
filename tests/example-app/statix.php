@@ -6,6 +6,6 @@ require_once './../../vendor/autoload.php';
 
 $app = Application::new();
 
-$app->cli->run();
+// dd(config_path('app.php'));
 
-// dd(view2('welcome')->render());
+$app->cli->run();

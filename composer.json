@@ -25,6 +25,11 @@
         "spatie/yaml-front-matter": "^2.0",
         "symfony/finder": "^5.0"
     },
+    "require-dev": {
+        "brianium/paratest": "^6.4",
+        "mockery/mockery": "^1.4.4",
+        "phpunit/phpunit": "^9.5.10"
+    },
     "autoload": {
         "psr-4": {
             "Statix\\": "src/"
@@ -35,7 +40,8 @@
     },
     "autoload-dev": {
         "psr-4": { 
-            "App\\": "tests/example/app" 
+            "App\\": "tests/example-app/app",
+            "Tests\\": "tests/"
         }
     }
 }

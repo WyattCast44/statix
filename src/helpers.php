@@ -52,7 +52,7 @@ if (! function_exists('base_path')) {
      */
     function base_path($path = ''): string
     {
-        return app()->paths->append('config', $path);
+        return app()->paths->append('cwd', $path);
     }
 
 }
@@ -145,7 +145,7 @@ if(!function_exists('statix')) {
      */
     function statix(): Application
     {
-        return container()->make(Application::class);
+        return app()->make(Application::class);
     }
 
 }
@@ -155,10 +155,10 @@ if(!function_exists('path')) {
     function path($key = null, $default = null): mixed
     {
         if($key != null) {
-            return realpath(container()->make('paths')->get($key, $default));
+            return realpath(app()->make('paths')->get($key, $default));
         }
 
-        return container()->make('paths');
+        return app()->make('paths');
     }
 
 }
@@ -167,12 +167,12 @@ if(!function_exists('path_join')) {
 
     function path_join($key, ...$appends): mixed
     {
-        return container()->make('paths')->get($key) . implode('', $appends);
+        return app()->make('paths')->get($key) . implode('', $appends);
     }
 
     function path_build($key, ...$appends): mixed
     {
-        return rtrim(container()->make('paths')->get($key), '/') . '/' . implode('/', $appends);
+        return rtrim(app()->make('paths')->get($key), '/') . '/' . implode('/', $appends);
     }
 
 }
@@ -181,7 +181,7 @@ if(!function_exists('path_build')) {
 
     function path_build($key, ...$appends): mixed
     {
-        return rtrim(container()->make('paths')->get($key), '/') . '/' . implode('/', $appends);
+        return rtrim(app()->make('paths')->get($key), '/') . '/' . implode('/', $appends);
     }
 
 }
@@ -190,7 +190,7 @@ if(!function_exists('route')) {
 
     function route($name, $props = null)
     {
-        $registrar = container()->make(RouteRegistrar::class);
+        $registrar = app()->make(RouteRegistrar::class);
 
         if(Arr::has($registrar->namedRoutes, $name)) {
             

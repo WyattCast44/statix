@@ -74,13 +74,11 @@ class Application
 
     private function ensureContainerIsBinded()
     {
-        $this->container = new Container;
-
-        $this->container->instance(Application::class, $this);
-
-        $this->container->setInstance($this->container);
-
-        $this->container->instance(FoundationApplication::class, $this->container);
+        $this->container = tap(new Container, function(Container $container) {
+            $container->setInstance($container);
+            $container->instance(Application::class, $this);
+            $container->instance(FoundationApplication::class, $container);
+        });
 
         Facade::setFacadeApplication($this->container);
 
@@ -92,6 +90,8 @@ class Application
         $this->container->singleton('paths', function() {
             return new PathRepository;
         });
+
+        // this should be cacheable ... ?
 
         $this->paths = tap($this->container->make('paths'), function($repo) {
             $cwd = getcwd();
@@ -139,6 +139,8 @@ class Application
     {
         $path = $this->paths->get('config');
 
+        // this should be cacheable ... ?
+
         $items = collect(scandir($path))
             ->reject(function ($file) {
                 return is_dir($file);
@@ -163,13 +165,16 @@ class Application
             );
         });
 
-        Command::macro('container', function() {
+        $this->cli = tap($this->container->make('cli'))
+            ->setName($this->config->get('app.name', 'Statix Application'));
+        
+        Command::macro('app', function() {
             return $this->laravel;
         });
 
-        $this->cli = $this->container->make('cli');
-
-        $this->cli->setName($this->config->get('app.name', 'Statix Application'));
+        Command::macro('container', function() {
+            return $this->laravel;
+        });
 
         return $this;
     }
@@ -183,6 +188,8 @@ class Application
 
             return $this;
         }
+
+        // this should be cacheable ... ?
 
         $items = collect(scandir($path))
             ->reject(function ($file) {
@@ -290,8 +297,10 @@ class Application
         });
 
         $viewFinder = new FileViewFinder(
-            $this->container->make('files'),
-            [$this->paths->get('views'), $this->paths->get('content')]
+            $this->container->make('files'), [
+                $this->paths->get('views'), 
+                $this->paths->get('content')
+            ]
         );
 
         $viewFactory = tap(new ViewFactory(
