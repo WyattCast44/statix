@@ -19,7 +19,7 @@ class WatchCommand extends Command
         $this->info(PHP_EOL . 'Watching your application for changes');
 
         try {
-            $this->call('build', [
+            $this->callSilently('build', [
                 'name' => $this->argument('build'),
             ]);
         } catch (\Throwable $th) {
@@ -63,7 +63,7 @@ class WatchCommand extends Command
             if(Str::startsWith($path, path('config'))) {
                 $this->info(PHP_EOL . 'Reloading config files');
 
-                app()->reloadConfigFiles();
+                statix()->reloadConfigFiles();
             }
 
             $this->call('build', [

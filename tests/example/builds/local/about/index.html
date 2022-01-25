@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="description" content="{{ config('meta.description', 'Example description') }}">
-    <title>{{ config('meta.title', 'Example Title') }}</title>
+    <meta name="description" content="This is a example statix application for testing/development purposes">
+    <title>Example Statix Application</title>
     <link rel="stylesheet" href="http://localhost:8080/css/app.css">
     <script src="http://localhost:8080/js/app.js" defer></script>
 </head>
@@ -15,25 +15,25 @@
 
         <header class="flex items-center justify-between pb-5 mb-5 border-b border-gray-300">
 
-            <h1 class="text-3xl font-bold">@yield('page::title')</h1>
+            <h1 class="text-3xl font-bold">About Us</h1>
     
             <ul class="flex items-center space-x-3 text-lg">
-                {{-- <li><a href="{{ route('welcome') }}">Home</a></li> --}}
-                {{-- <li><a href="{{ route('about') }}">About Us</a></li>
-                <li><a href="{{ route('contact') }}">Contact Us</a></li> --}}
+                
+                
             </ul>
             
         </header>
 
-        @yield('body')
+        
+    <div class="prose">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae quasi nemo impedit non soluta? Quam consequatur eum doloremque perspiciatis eligendi, ullam aspernatur vitae, rem nostrum tempore error numquam? Ab, eos.</p>
+    </div>
+    
 
         <footer class="pt-5 mt-5 border-t border-gray-300">
 
             <ul class="flex items-center space-x-5 text-sm">
-                {{-- <li><a href="{{ route('welcome') }}">Home</a></li>
-                <li><a href="{{ route('blog.index') }}">Blog</a></li>
-                <li><a href="{{ route('about') }}">About Us</a></li>
-                <li><a href="{{ route('contact') }}">Contact Us</a></li> --}}
+                
             </ul>
 
         </footer>

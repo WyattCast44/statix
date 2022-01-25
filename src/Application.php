@@ -14,7 +14,6 @@ use Statix\Commands\BuildCommand;
 use Statix\Commands\MakeProvider;
 use Statix\Commands\ServeCommand;
 use Statix\Commands\WatchCommand;
-use NunoMaduro\Collision\Provider;
 use Statix\Commands\MakeComponent;
 use Illuminate\Support\Collection;
 use Statix\Routing\RouteRegistrar;
@@ -31,6 +30,7 @@ use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Factory as ViewFactory;
 use Illuminate\View\Compilers\BladeCompiler;
+use NunoMaduro\Collision\Provider as Collision;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\View\Factory as ViewFactoryContact;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
@@ -47,9 +47,14 @@ class Application
 
     public Collection $providers;
 
+    public static function new(): static
+    {   
+        return new static;
+    }
+
     public function __construct()
     {
-        (new Provider)->register();
+        (new Collision)->register();
 
         $this
             ->ensureContainerIsBinded()
@@ -65,11 +70,6 @@ class Application
             ->ensureBladeEngineIsConfigured()
             ->ensureRequiredPathsExist()
             ->ensureRouteRegistrarIsBinded();
-    }
-
-    public static function new(): static
-    {   
-        return new static;
     }
 
     private function ensureContainerIsBinded()

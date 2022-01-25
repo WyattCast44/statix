@@ -35,7 +35,7 @@ class BuildRouteFromView
             // write the static page to file
             File::put(
                 path_build('builds', $this->cli->argument('name'), 'index.html'), 
-                view($this->route['view'], $this->route['data'])
+                view($this->route['view'], $this->route['data'])->render()
             );
             
         } else {
@@ -50,7 +50,7 @@ class BuildRouteFromView
             // write the static page to file
             File::put(
                 path_build('builds', $this->cli->argument('name'), $this->route['uri'], 'index.html'), 
-                view($this->route['view'], $this->route['data'])
+                view($this->route['view'], $this->route['data'])->render()
             );
 
         }

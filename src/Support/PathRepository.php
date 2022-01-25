@@ -53,4 +53,18 @@ class PathRepository
     {
         return array_key_exists($key, $this->paths);
     }
+
+    public function append($key, ...$appends): string
+    {
+        if($this->has($key)) {
+            
+            if(is_null($appends)) {
+                return $this->get($key);
+            }
+            
+            return rtrim($this->get($key), '/') . '/' . implode('/', $appends);
+        }
+
+        return $appends;
+    }
 }

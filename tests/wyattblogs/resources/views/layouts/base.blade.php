@@ -11,7 +11,7 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.0.0/turbolinks.min.js" defer></script>
 </head>
-<body class="h-screen overflow-hidden font-sans text-gray-100 bg-gradient-to-br from-slate-800 to-indigo-800 selection:bg-slate-500">
+<body class="h-screen font-sans text-gray-100 bg-gradient-to-br from-slate-800 to-indigo-800 selection:bg-slate-500">
 
     <div class="absolute inset-0 bg-opacity-75 -z-10" style="background-image: url({{ asset('art/stars.gif') }})">
     </div>

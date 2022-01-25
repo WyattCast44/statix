@@ -29,6 +29,8 @@ Forged by skilled Laravel Artisans with the power of PHP, wielding the Blade, to
 
 - https://stackoverflow.com/questions/65651169/php-check-if-function-callable-but-not-invokable-object
 - https://github.com/spatie/file-system-watcher
+- https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
+- https://github.com/illuminate/support/blob/master/helpers.php
 
 # Routing
 
