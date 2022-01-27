@@ -3,8 +3,8 @@
 namespace Statix\Commands;
 
 use Illuminate\Support\Str;
-use Statix\Support\Filesystem;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class MakeComponent extends Command
 {
@@ -14,8 +14,8 @@ class MakeComponent extends Command
 
    public function handle()
    {
-        Filesystem::ensureDirectoryExists(path_join('app_path', '/View/Components'));
-        Filesystem::ensureDirectoryExists(path_join('views', '/components'));
+        File::ensureDirectoryExists(path_join('app_path', '/View/Components'));
+        File::ensureDirectoryExists(path_join('views', '/components'));
 
         $name = $this->determineName();
 
@@ -26,7 +26,7 @@ class MakeComponent extends Command
         $classTemplate = Str::replace(
             '{{ CLASS_NAME }}', 
             $className, 
-            Filesystem::get( __DIR__ . '/stubs/Component.stub')
+            File::get( __DIR__ . '/stubs/Component.stub')
         );
 
         $classTemplate = Str::replace(
@@ -39,9 +39,9 @@ class MakeComponent extends Command
 
         $classPath = path_join('app_path', '/View/Components/', $className, '.php');
 
-        Filesystem::put($classPath, $classTemplate);
+        File::put($classPath, $classTemplate);
 
-        Filesystem::put($viewPath, Filesystem::get(__DIR__ . '/stubs/view.stub'));
+        File::put($viewPath, File::get(__DIR__ . '/stubs/view.stub'));
 
         $this->info(PHP_EOL . 'Component created!' . PHP_EOL);
         $this->info('Class: ' . $classPath);

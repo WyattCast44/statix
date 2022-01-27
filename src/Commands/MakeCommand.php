@@ -3,8 +3,8 @@
 namespace Statix\Commands;
 
 use Illuminate\Support\Str;
-use Statix\Support\Filesystem;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class MakeCommand extends Command
 {
@@ -14,15 +14,15 @@ class MakeCommand extends Command
 
     public function handle()
     {        
-        Filesystem::ensureDirectoryExists(path_join('cwd', '/app/Console/Commands'));
+        File::ensureDirectoryExists(path_join('cwd', '/app/Console/Commands'));
 
         $name = $this->determineName();
 
         $path = path_join('app_path', '/Console/Commands/', $name, '.php');
 
-        $contents = Str::replace('{{ COMMAND_NAME }}', $name, Filesystem::get(__DIR__. '/stubs/Command.stub'));
+        $contents = Str::replace('{{ COMMAND_NAME }}', $name, File::get(__DIR__. '/stubs/Command.stub'));
 
-        Filesystem::put($path, $contents);
+        File::put($path, $contents);
         
         $this->info(PHP_EOL . 'Console command created successfully: ' . $path);
     }

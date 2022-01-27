@@ -17,7 +17,6 @@ use Statix\Commands\WatchCommand;
 use Statix\Commands\MakeComponent;
 use Illuminate\Support\Collection;
 use Statix\Routing\RouteRegistrar;
-use Statix\Support\PathRepository;
 use Illuminate\View\FileViewFinder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
