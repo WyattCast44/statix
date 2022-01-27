@@ -55,6 +55,7 @@ class WatchCommand extends Command
 
         Watch::paths(
             path('views'),
+            path('public'),
             path('routes'),
             path('assets'),
             path('config'),
@@ -63,7 +64,7 @@ class WatchCommand extends Command
             if(Str::startsWith($path, path('config'))) {
                 $this->info(PHP_EOL . 'Reloading config files');
 
-                statix()->reloadConfigFiles();
+                app()->make('statix')->reloadConfigFiles();
             }
 
             $this->call('build', [

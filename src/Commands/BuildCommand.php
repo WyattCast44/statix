@@ -33,7 +33,7 @@ class BuildCommand extends Command
         
         require path('cwd') . '/routes/web.php';
 
-        collect(container()->make(RouteRegistrar::class)->routes)->each(function($route, $uri) {
+        collect(app()->make(RouteRegistrar::class)->routes)->each(function($route, $uri) {
             
             if($route['strategy'] === 'view'):
 
@@ -79,7 +79,7 @@ class BuildCommand extends Command
 
         });
 
-        container()->make(RouteRegistrar::class)->routes = [];
+        app()->make(RouteRegistrar::class)->routes = [];
 
         $this->comment('Build time: ' . round(microtime(true) - $this->buildStart, 4) . 's');
     }

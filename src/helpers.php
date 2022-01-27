@@ -1,6 +1,5 @@
 <?php
 
-use Statix\Application;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Statix\Support\Container;
@@ -37,7 +36,7 @@ if (! function_exists('app_path')) {
      */
     function app_path($path = ''): string
     {
-        return statix()->paths->append('app_path', $path === '' ? null : $path);
+        return app()->make('paths')->get('app_path') . $path;
     }
 
 }
@@ -52,7 +51,7 @@ if (! function_exists('base_path')) {
      */
     function base_path($path = ''): string
     {
-        return app()->paths->append('cwd', $path);
+        return app()->make('paths')->get('cwd') . $path;
     }
 
 }
@@ -94,7 +93,7 @@ if (! function_exists('config_path')) {
      */
     function config_path($path = ''): string
     {
-        return app()->paths->append('config', $path);
+        return app()->make('paths')->get('config') . $path;
     }
 
 }
@@ -121,47 +120,6 @@ if(!function_exists('view')) {
     }
 
 }
-
-if(!function_exists('container')) {
-
-    /**
-     * Obtain the instance of the Statix/Illuminate container
-     *
-     * @return Statix\Support\Container
-     */
-    function container(): Container
-    {
-        return Container::getInstance();
-    }
-
-}
-
-if(!function_exists('statix')) {
-    
-    /**
-     * Obtain the instance of the Statix Application
-     *
-     * @return Statix\Application
-     */
-    function statix(): Application
-    {
-        return app()->make(Application::class);
-    }
-
-}
-
-// if(!function_exists('path')) {
-
-//     function path($key = null, $default = null): mixed
-//     {
-//         if($key != null) {
-//             return realpath(app()->make('paths')->get($key, $default));
-//         }
-
-//         return app()->make('paths');
-//     }
-
-// }
 
 if(!function_exists('path')) {
 
@@ -232,9 +190,7 @@ if(!function_exists('asset')) {
 
     function asset($path)
     {
-        return config('app.url', 'http://localhost:8080') . '/' . $path;
+        return config('site.url', 'http://localhost') . ':' . config('site.port', '8080') . '/' . $path;
     }
 
 }
-
-

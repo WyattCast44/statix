@@ -76,6 +76,7 @@ class Application
         $this->container = tap(new Container, function(Container $container) {
             $container->setInstance($container);
             $container->instance(Application::class, $this);
+            $container->alias(Application::class, 'statix');
             $container->instance(FoundationApplication::class, $container);
         });
 
@@ -100,14 +101,13 @@ class Application
                 'app_path' => $cwd . '/app',
                 'env_file' => $cwd . '/.env',
                 'resource_path' => $cwd . '/resources',
-                'assets' => $cwd . '/resources/assets',
                 'builds' => $cwd . '/builds',
                 'config' => $cwd . '/config',
                 'content' => $cwd . '/resources/content',
                 'public' => $cwd . '/public',
                 'routes' => $cwd . '/routes',
                 'views' => $cwd . '/resources/views',
-                'view_cache' => $cwd . '/builds/_cache/views',
+                'view_cache' => $cwd . '/storage/framework/views',
             ]);
         });
 
@@ -162,12 +162,12 @@ class Application
             return new ConsoleApplication(
                 $this->container, 
                 new Dispatcher($this->container),
-                $this->config->get('app.version', ''),
+                $this->config->get('site.version', ''),
             );
         });
 
         $this->cli = tap($this->container->make('cli'))
-            ->setName($this->config->get('app.name', 'Statix Application'));
+            ->setName($this->config->get('site.name', 'Statix Application'));
         
         Command::macro('app', function() {
             return $this->laravel;
@@ -263,7 +263,7 @@ class Application
 
     private function ensureRequiredPathsExist()
     {
-        collect(['assets', 'builds', 'content', 'routes', 'views'])->each(function($path) {
+        collect(['content', 'routes', 'views'])->each(function($path) {
             if(!is_dir($this->paths->get($path))) {
                 if(!file_exists($this->paths->get($path))) {
                     throw new Exception("The '$path' path must be defined and exist. Current set to: " . $this->paths->get($path));

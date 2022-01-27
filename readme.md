@@ -79,10 +79,10 @@ if ($finder->hasResults()) {
     }
 }
 
-dd($posts, config('app.env'));
+dd($posts, config('site.env'));
 
 Content::query()
-    ->if(config('app.env') == 'local', function() {
+    ->if(config('site.env') == 'local', function() {
         return $this->published();
     });
 

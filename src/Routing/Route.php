@@ -45,6 +45,6 @@ class Route
 
     public function __destruct()
     {
-        container()->make(RouteRegistrar::class)->add($this);
+        app()->make(RouteRegistrar::class)->add($this);
     }
 }
