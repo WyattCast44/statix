@@ -4,8 +4,12 @@ namespace Statix;
 
 use Exception;
 use Dotenv\Dotenv;
+use Statix\Events\PathsBound;
 use Statix\Support\Container;
+use Statix\Commands\MakeEvent;
+use Statix\Events\ConfigBound;
 use Illuminate\Console\Command;
+use Statix\Events\EnvFileLoaded;
 use Statix\Commands\ClearBuilds;
 use Statix\Commands\MakeCommand;
 use Illuminate\Config\Repository;
@@ -14,12 +18,13 @@ use Statix\Commands\BuildCommand;
 use Statix\Commands\MakeProvider;
 use Statix\Commands\ServeCommand;
 use Statix\Commands\WatchCommand;
-use Statix\Commands\MakeComponent;
 use Illuminate\Support\Collection;
+use Statix\Commands\MakeComponent;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\View\FileViewFinder;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
+use Statix\Events\ConfigFilesLoaded;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Facade;
@@ -33,6 +38,7 @@ use NunoMaduro\Collision\Provider as Collision;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\View\Factory as ViewFactoryContact;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
+use Statix\Events\CliBound;
 
 class Application
 {
@@ -57,6 +63,7 @@ class Application
 
         $this
             ->ensureContainerIsBinded()
+            ->ensureEventDispatcherIsBinded()
             ->ensurePathsAreBindedAndConfigured()
             ->ensureEnvFilesAreLoaded()
             ->ensureConfigIsBindedAndLoaded()
@@ -81,6 +88,15 @@ class Application
         });
 
         Facade::setFacadeApplication($this->container);
+
+        return $this;
+    }
+
+    private function ensureEventDispatcherIsBinded()
+    {
+        $this->container->bind('events', function() {
+            return new Dispatcher($this->container);
+        });
 
         return $this;
     }
@@ -111,6 +127,8 @@ class Application
             ]);
         });
 
+        event(new PathsBound($this->paths));
+
         return $this;
     }
 
@@ -118,6 +136,8 @@ class Application
     {
         if(file_exists($this->paths->get('env_file'))) {
             (Dotenv::createImmutable($this->paths->get('cwd')))->safeLoad();
+
+            event(new EnvFileLoaded);
         }
 
         return $this;
@@ -131,6 +151,8 @@ class Application
 
         $this->config = $this->container->make('config');
 
+        event(new ConfigBound($this->config));
+        
         $this->reloadConfigFiles();
 
         return $this;
@@ -153,6 +175,8 @@ class Application
 
         $this->config->set($items);
 
+        event(new ConfigFilesLoaded($this->config));
+
         return $this;
     }
 
@@ -168,6 +192,8 @@ class Application
 
         $this->cli = tap($this->container->make('cli'))
             ->setName($this->config->get('site.name', 'Statix Application'));
+
+        event(new CliBound($this->cli));
         
         Command::macro('app', function() {
             return $this->laravel;
@@ -233,6 +259,7 @@ class Application
             ClearCompiledViews::class,
             MakeCommand::class,
             MakeComponent::class,
+            MakeEvent::class,
             MakeProvider::class,
             ServeCommand::class,
             WatchCommand::class,

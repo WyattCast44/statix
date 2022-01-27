@@ -117,3 +117,18 @@ class Content
 - copy js
 - copy config (need to merge app.php?, or maybe create new config file in laravel app and save all config to that file?)
 - 
+
+# Redirect
+
+```php
+Route::redirect('/old', '/new', function() {
+    // render an html template with a js redirect
+})
+```
+# Base Kits
+
+- Minimal, no app, no config, no etc
+- Tailwind Blog
+- Tailwind Docs
+- Bootstrap Docs
+- Bootstrap Blog
