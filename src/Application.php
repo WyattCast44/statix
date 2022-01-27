@@ -94,7 +94,7 @@ class Application
 
     private function ensureEventDispatcherIsBinded()
     {
-        $this->container->bind('events', function() {
+        $this->container->singleton('events', function() {
             return new Dispatcher($this->container);
         });
 
@@ -193,15 +193,9 @@ class Application
         $this->cli = tap($this->container->make('cli'))
             ->setName($this->config->get('site.name', 'Statix Application'));
 
+        $this->cli->app = $this->cli->getLaravel();
+    
         event(new CliBound($this->cli));
-        
-        Command::macro('app', function() {
-            return $this->laravel;
-        });
-
-        Command::macro('container', function() {
-            return $this->laravel;
-        });
 
         return $this;
     }
