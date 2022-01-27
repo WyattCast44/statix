@@ -5,6 +5,7 @@ namespace Statix\Commands;
 use Spatie\Watcher\Watch;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use Statix\Actions\LoadConfigFiles;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -57,14 +58,13 @@ class WatchCommand extends Command
             path('views'),
             path('public'),
             path('routes'),
-            path('assets'),
             path('config'),
         )->onAnyChange(function(string $type, string $path) {  
 
-            if(Str::startsWith($path, path('config'))) {
+            if(Str::startsWith($path, Str::replace('/', '\\', path('config')))) {
                 $this->info(PHP_EOL . 'Reloading config files');
 
-                app()->make('statix')->reloadConfigFiles();
+                app()->make(LoadConfigFiles::class)->execute();
             }
 
             $this->call('build', [

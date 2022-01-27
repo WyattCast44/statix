@@ -3,42 +3,20 @@
 namespace Statix;
 
 use Exception;
-use Dotenv\Dotenv;
-use Statix\Events\PathsBound;
 use Statix\Support\Container;
-use Statix\Commands\MakeEvent;
-use Statix\Events\ConfigBound;
-use Illuminate\Console\Command;
-use Statix\Events\EnvFileLoaded;
-use Statix\Commands\ClearBuilds;
-use Statix\Commands\MakeCommand;
 use Illuminate\Config\Repository;
-use Illuminate\Events\Dispatcher;
-use Statix\Commands\BuildCommand;
-use Statix\Commands\MakeProvider;
-use Statix\Commands\ServeCommand;
-use Statix\Commands\WatchCommand;
-use Illuminate\Support\Collection;
-use Statix\Commands\MakeComponent;
 use Statix\Routing\RouteRegistrar;
-use Illuminate\View\FileViewFinder;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\View;
-use Statix\Events\ConfigFilesLoaded;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\View\Engines\PhpEngine;
-use Statix\Commands\ClearCompiledViews;
-use Illuminate\View\Engines\CompilerEngine;
-use Illuminate\View\Engines\EngineResolver;
-use Illuminate\View\Factory as ViewFactory;
-use Illuminate\View\Compilers\BladeCompiler;
+use Statix\Providers\CliServiceProvider;
+use Statix\Providers\ViewServiceProvider;
+use Statix\Providers\PathServiceProvider;
+use Statix\Providers\EventServiceProvider;
+use Statix\Providers\ConfigServiceProvider;
+use Statix\Providers\EnvFileServiceProvider;
 use NunoMaduro\Collision\Provider as Collision;
 use Illuminate\Console\Application as ConsoleApplication;
-use Illuminate\Contracts\View\Factory as ViewFactoryContact;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
-use Statix\Events\CliBound;
 
 class Application
 {
@@ -49,6 +27,8 @@ class Application
     public Repository $config;
 
     public ConsoleApplication $cli;
+
+    public Collection $defaultProviders;
 
     public Collection $providers;
 
@@ -63,17 +43,12 @@ class Application
 
         $this
             ->ensureContainerIsBinded()
-            ->ensureEventDispatcherIsBinded()
-            ->ensurePathsAreBindedAndConfigured()
-            ->ensureEnvFilesAreLoaded()
-            ->ensureConfigIsBindedAndLoaded()
-            ->ensureCliApplicationIsBinded()
-            ->ensureServiceProvidersAreRegistered()
-            ->ensureServiceProvidersAreBooted()
-            ->ensureDefaultCommandsAreRegistered()
+            ->ensureDefaultServiceProvidersAreRegistered()
+            ->ensureDefaultServiceProvidersAreBooted()
+            ->ensureUserServiceProvidersAreRegistered()
+            ->ensureUserServiceProvidersAreBooted()
             ->ensureUserCommandsAreRegistered()
             ->ensureUserPathsAreRegistered()
-            ->ensureBladeEngineIsConfigured()
             ->ensureRequiredPathsExist()
             ->ensureRouteRegistrarIsBinded();
     }
@@ -92,115 +67,41 @@ class Application
         return $this;
     }
 
-    private function ensureEventDispatcherIsBinded()
+    private function ensureDefaultServiceProvidersAreRegistered()
     {
-        $this->container->singleton('events', function() {
-            return new Dispatcher($this->container);
+        $this->defaultProviders = collect([
+            EventServiceProvider::class,
+            EnvFileServiceProvider::class,
+            PathServiceProvider::class,
+            ConfigServiceProvider::class,
+            CliServiceProvider::class,
+            ViewServiceProvider::class,
+        ])->map(function($provider) {
+            
+            $obj = new $provider($this->container);
+
+            if(method_exists($obj, 'register')) {
+                $obj->register();
+            }
+
+            return $obj;
         });
 
         return $this;
     }
 
-    private function ensurePathsAreBindedAndConfigured()
+    private function ensureDefaultServiceProvidersAreBooted()
     {
-        $cwd = getcwd();
-
-        $this->container->singleton('paths', function() {
-            return new Repository;
+        $this->defaultProviders->each(function ($provider) {
+            if(method_exists($provider, 'boot')) {
+                $provider->boot();
+            }
         });
 
-        // this should be cacheable ... ?
-
-        $this->paths = tap($this->container->make('paths'), function($repo) use ($cwd) {
-            $repo->set([
-                'cwd' => $cwd,
-                'app_path' => $cwd . '/app',
-                'env_file' => $cwd . '/.env',
-                'resource_path' => $cwd . '/resources',
-                'builds' => $cwd . '/builds',
-                'config' => $cwd . '/config',
-                'content' => $cwd . '/resources/content',
-                'public' => $cwd . '/public',
-                'routes' => $cwd . '/routes',
-                'views' => $cwd . '/resources/views',
-                'view_cache' => $cwd . '/storage/framework/views',
-            ]);
-        });
-
-        event(new PathsBound($this->paths));
-
         return $this;
     }
 
-    private function ensureEnvFilesAreLoaded()
-    {
-        if(file_exists($this->paths->get('env_file'))) {
-            (Dotenv::createImmutable($this->paths->get('cwd')))->safeLoad();
-
-            event(new EnvFileLoaded);
-        }
-
-        return $this;
-    }
-
-    private function ensureConfigIsBindedAndLoaded()
-    {
-        $this->container->singleton('config', function() {
-            return new Repository;
-        });
-
-        $this->config = $this->container->make('config');
-
-        event(new ConfigBound($this->config));
-        
-        $this->reloadConfigFiles();
-
-        return $this;
-    }
-
-    public function reloadConfigFiles()
-    {
-        $path = $this->paths->get('config');
-
-        // this should be cacheable ... ?
-
-        $items = collect(scandir($path))
-            ->reject(function ($file) {
-                return is_dir($file);
-            })->reject(function ($file) {
-                return (pathinfo($file)['extension'] != 'php');
-            })->mapWithKeys(function ($file) use ($path) {
-                return [basename($file, '.php') => require $path . '/' . $file];
-            })->toArray();
-
-        $this->config->set($items);
-
-        event(new ConfigFilesLoaded($this->config));
-
-        return $this;
-    }
-
-    private function ensureCliApplicationIsBinded()
-    {
-        $this->container->singleton('cli', function() {
-            return new ConsoleApplication(
-                $this->container, 
-                new Dispatcher($this->container),
-                $this->config->get('site.version', ''),
-            );
-        });
-
-        $this->cli = tap($this->container->make('cli'))
-            ->setName($this->config->get('site.name', 'Statix Application'));
-
-        $this->cli->app = $this->cli->getLaravel();
-    
-        event(new CliBound($this->cli));
-
-        return $this;
-    }
-
-    public function ensureServiceProvidersAreRegistered()
+    public function ensureUserServiceProvidersAreRegistered()
     {
         $path = $this->paths->get('app_path') . '/Providers';
 
@@ -209,8 +110,6 @@ class Application
 
             return $this;
         }
-
-        // this should be cacheable ... ?
 
         $items = collect(scandir($path))
             ->reject(function ($file) {
@@ -234,7 +133,7 @@ class Application
         return $this;
     }
 
-    public function ensureServiceProvidersAreBooted()
+    public function ensureUserServiceProvidersAreBooted()
     {
         $this->providers->each(function ($provider) {
             if(method_exists($provider, 'boot')) {
@@ -245,27 +144,10 @@ class Application
         return $this;
     }
 
-    private function ensureDefaultCommandsAreRegistered()
-    {
-        $this->cli->resolveCommands([
-            BuildCommand::class,
-            ClearBuilds::class,
-            ClearCompiledViews::class,
-            MakeCommand::class,
-            MakeComponent::class,
-            MakeEvent::class,
-            MakeProvider::class,
-            ServeCommand::class,
-            WatchCommand::class,
-        ]);
-
-        return $this;
-    }
-
     private function ensureUserCommandsAreRegistered()
     {
-        if($this->config->has('app.commands')) {
-            $this->cli->resolveCommands($this->config->get('app.commands', []));
+        if($this->config->has('site.commands')) {
+            $this->cli->resolveCommands($this->config->get('site.commands', []));
         }
 
         return $this;
@@ -273,8 +155,8 @@ class Application
 
     private function ensureUserPathsAreRegistered()
     {
-        if($this->config->has('app.paths')) {
-            collect($this->config->get('app.paths', []))->each(function($path, $key) {
+        if($this->config->has('site.paths')) {
+            collect($this->config->get('site.paths', []))->each(function($path, $key) {
                 $this->paths->set($key, $path, true);
             });
         }
@@ -284,70 +166,13 @@ class Application
 
     private function ensureRequiredPathsExist()
     {
-        collect(['content', 'routes', 'views'])->each(function($path) {
+        collect(['routes', 'views'])->each(function($path) {
             if(!is_dir($this->paths->get($path))) {
                 if(!file_exists($this->paths->get($path))) {
-                    throw new Exception("The '$path' path must be defined and exist. Current set to: " . $this->paths->get($path));
+                    throw new Exception("The '$path' path must be defined and exist. Currently set to: " . $this->paths->get($path));
                 }
             }
         });
-
-        return $this;
-    }
-
-    private function ensureBladeEngineIsConfigured()
-    {
-        $this->container->bind('files', function() {
-            return new Filesystem;
-        });
-                
-        File::ensureDirectoryExists($this->paths->get('view_cache'));
-
-        $viewResolver = new EngineResolver;
-
-        $bladeCompiler = new BladeCompiler(
-            $this->container->make('files'),
-            $this->paths->get('view_cache'),
-        );
-
-        $viewResolver->register('blade', function() use ($bladeCompiler) {
-            return new CompilerEngine($bladeCompiler);
-        });
-
-        $viewResolver->register('php', function() {
-            return new PhpEngine($this->container->make('files'));
-        });
-
-        $viewFinder = new FileViewFinder(
-            $this->container->make('files'), [
-                $this->paths->get('views'), 
-                $this->paths->get('content')
-            ]
-        );
-
-        $viewFactory = tap(new ViewFactory(
-            $viewResolver, 
-            $viewFinder,
-            new Dispatcher($this->container),
-        ))->setContainer($this->container);
-
-        $this->container->instance(ViewFactoryContact::class, $viewFactory);
-
-        $this->container->alias(
-            ViewFactoryContact::class, 
-            (new class extends View {
-                public static function getFacadeAccessor() { return parent::getFacadeAccessor(); }
-            })::getFacadeAccessor(),
-        );
-
-        $this->container->instance(BladeCompiler::class, $bladeCompiler);
-
-        $this->container->alias(
-            BladeCompiler::class, 
-            (new class extends Blade {
-                public static function getFacadeAccessor() { return parent::getFacadeAccessor(); }
-            })::getFacadeAccessor()
-        );
 
         return $this;
     }

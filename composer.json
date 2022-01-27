@@ -23,7 +23,8 @@
         "spatie/file-system-watcher": "^1.0",
         "symfony/process": "^5.0",
         "spatie/yaml-front-matter": "^2.0",
-        "symfony/finder": "^5.0"
+        "symfony/finder": "^5.0",
+        "guzzlehttp/guzzle": "^7.4"
     },
     "require-dev": {
         "brianium/paratest": "^6.4",

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Http;
 use Statix\Routing\Route;
 
 Route::view('/', 'welcome')->name('welcome');

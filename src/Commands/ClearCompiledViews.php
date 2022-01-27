@@ -14,6 +14,6 @@ class ClearCompiledViews extends Command
     {
         array_map('unlink', array_filter((array) glob(path('view_cache') . '/*.php')));
 
-        $this->info(PHP_EOL . 'Cleared compiled templates/views!');
+        $this->info(PHP_EOL . 'Cleared compiled templates/views successfully');
     }
 }

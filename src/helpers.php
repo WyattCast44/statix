@@ -41,6 +41,23 @@ if (! function_exists('app_path')) {
 
 }
 
+if (! function_exists('event')) {
+
+    /**
+     * Dispatch an event and call the listeners.
+     *
+     * @param  string|object  $event
+     * @param  mixed  $payload
+     * @param  bool  $halt
+     * @return array|null
+     */
+    function event(...$args)
+    {
+        return app('events')->dispatch(...$args);
+    }
+    
+}
+
 if (! function_exists('base_path')) {
 
     /**
@@ -52,6 +69,21 @@ if (! function_exists('base_path')) {
     function base_path($path = ''): string
     {
         return app()->make('paths')->get('cwd') . $path;
+    }
+
+}
+
+if (! function_exists('public_path')) {
+
+    /**
+     * Get the path to the application folder.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function public_path($path = ''): string
+    {
+        return app()->make('paths')->get('public') . $path;
     }
 
 }
@@ -193,21 +225,4 @@ if(!function_exists('asset')) {
         return config('site.url', 'http://localhost') . ':' . config('site.port', '8080') . '/' . $path;
     }
 
-}
-
-if (! function_exists('event')) {
-
-    /**
-     * Dispatch an event and call the listeners.
-     *
-     * @param  string|object  $event
-     * @param  mixed  $payload
-     * @param  bool  $halt
-     * @return array|null
-     */
-    function event(...$args)
-    {
-        return app('events')->dispatch(...$args);
-    }
-    
 }

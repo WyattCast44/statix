@@ -109,6 +109,11 @@ class Content
 }
 ```
 
+# Builds vs Env
+
+- builds can be anything
+- envs will decide what env and/or config files to load and which post processors to run
+
 # Publish/Eject to full Laravel App
 
 - copy public folder

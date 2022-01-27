@@ -3,7 +3,7 @@
 namespace Statix\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 
 class ClearBuilds extends Command
 {
@@ -13,8 +13,8 @@ class ClearBuilds extends Command
 
     public function handle()
     {
-        (new Filesystem)->deleteDirectory(path('builds'), true);
+        File::deleteDirectory(path('builds', true));
 
-        $this->info(PHP_EOL . 'Cleared builds!');
+        $this->info(PHP_EOL . 'Cleared builds successfully');
     }
 }

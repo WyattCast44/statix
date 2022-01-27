@@ -2,6 +2,7 @@
 
 namespace Statix\Support;
 
+use Illuminate\Support\Str;
 use Illuminate\Container\Container as BaseContainer;
 
 class Container extends BaseContainer
@@ -17,21 +18,20 @@ class Container extends BaseContainer
     }
 
     /**
-     * @param string|string[] $environments
-     * @return string|bool
+     * Get or check the current application environment.
      *
-     * @see \Illuminate\Contracts\Foundation\Application::environment()
+     * @param  string|array  $environments
+     * @return string|bool
      */
     public function environment(...$environments)
     {
-        if(empty($environments)) {
-            return 'statix';
+        if (count($environments) > 0) {
+            $patterns = is_array($environments[0]) ? $environments[0] : $environments;
+
+            return Str::is($patterns, env('APP_ENV', 'local'));
         }
 
-        return in_array(
-            'statix',
-            is_array($environments[0]) ? $environments[0] : $environments
-        );
+        return env('APP_ENV', 'local');
     }
 
     /**

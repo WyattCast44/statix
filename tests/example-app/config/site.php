@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Statix SSG Example Applcation'),
+    'name' => env('APP_NAME', 'Statix SSG Example Application'),
 
     /*
     |--------------------------------------------------------------------------
