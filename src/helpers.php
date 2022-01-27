@@ -150,12 +150,25 @@ if(!function_exists('statix')) {
 
 }
 
+// if(!function_exists('path')) {
+
+//     function path($key = null, $default = null): mixed
+//     {
+//         if($key != null) {
+//             return realpath(app()->make('paths')->get($key, $default));
+//         }
+
+//         return app()->make('paths');
+//     }
+
+// }
+
 if(!function_exists('path')) {
 
     function path($key = null, $default = null): mixed
     {
         if($key != null) {
-            return realpath(app()->make('paths')->get($key, $default));
+            return app()->make('paths')->get($key, $default);
         }
 
         return app()->make('paths');

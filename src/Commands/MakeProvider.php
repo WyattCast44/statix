@@ -26,7 +26,7 @@ class MakeProvider extends Command
 
         Filesystem::put($path, $contents);
         
-        $this->info(PHP_EOL . 'Provider created: ' . $path);
+        $this->info(PHP_EOL . 'Provider created successfully: ' . $path);
     }
 
     private function determineName(): string

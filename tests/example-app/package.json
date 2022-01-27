@@ -1,16 +1,25 @@
 {
-  "name": "example",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "devDependencies": {
-    "@tailwindcss/typography": "^0.5.0",
-    "alpinejs": "^3.7.1",
-    "autoprefixer": "^10.4.0",
-    "browser-sync": "^2.27.7",
-    "browser-sync-webpack-plugin": "2.3.0",
-    "laravel-mix": "^6.0.39",
-    "postcss": "^8.4.5",
-    "tailwindcss": "^3.0.8"
-  }
+	"name": "example",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"devDependencies": {
+		"@tailwindcss/typography": "^0.5.0",
+		"alpinejs": "^3.7.1",
+		"autoprefixer": "^10.4.0",
+		"browser-sync": "^2.27.7",
+		"browser-sync-webpack-plugin": "2.3.0",
+		"laravel-mix": "^6.0.39",
+		"postcss": "^8.4.5",
+		"tailwindcss": "^3.0.8"
+	},
+	"scripts": {
+		"dev": "npm run development",
+		"development": "mix",
+		"watch": "mix watch",
+		"watch-poll": "mix watch -- --watch-options-poll=1000",
+		"hot": "mix watch --hot",
+		"prod": "npm run production",
+		"production": "mix --production"
+	}
 }

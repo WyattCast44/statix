@@ -14,17 +14,17 @@ class MakeCommand extends Command
 
     public function handle()
     {        
-        Filesystem::ensureDirectoryExists(path_join('cwd', '/app/Commands'));
+        Filesystem::ensureDirectoryExists(path_join('cwd', '/app/Console/Commands'));
 
         $name = $this->determineName();
 
-        $path = path_join('app_path', '/Commands/', $name, '.php');
+        $path = path_join('app_path', '/Console/Commands/', $name, '.php');
 
         $contents = Str::replace('{{ COMMAND_NAME }}', $name, Filesystem::get(__DIR__. '/stubs/Command.stub'));
 
         Filesystem::put($path, $contents);
         
-        $this->info(PHP_EOL . 'Command created: ' . $path);
+        $this->info(PHP_EOL . 'Console command created successfully: ' . $path);
     }
 
     private function determineName(): string

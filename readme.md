@@ -108,3 +108,12 @@ class Content
     }
 }
 ```
+
+# Publish/Eject to full Laravel App
+
+- copy public folder
+- copy views
+- copy css
+- copy js
+- copy config (need to merge app.php?, or maybe create new config file in laravel app and save all config to that file?)
+- 

@@ -39,7 +39,7 @@ class Application
 {
     public Container $container;
 
-    public PathRepository $paths;
+    public Repository $paths;
 
     public Repository $config;
 
@@ -87,28 +87,30 @@ class Application
 
     private function ensurePathsAreBindedAndConfigured()
     {
+        $cwd = getcwd();
+
         $this->container->singleton('paths', function() {
-            return new PathRepository;
+            return new Repository;
         });
 
         // this should be cacheable ... ?
 
-        $this->paths = tap($this->container->make('paths'), function($repo) {
-            $cwd = getcwd();
-            $repo->set('cwd', $cwd);
-            $repo->set('app_path', $cwd . '/app');
-            $repo->set('env_file', $cwd . '/.env');
-            $repo->set('assets', $cwd . '/resources/assets');
-            $repo->set('builds', $cwd . '/builds');
-            $repo->set('config', $cwd . '/config');
-            $repo->set('content', $cwd . '/resources/content');
-            $repo->set('public', $cwd . '/resources/public');
-            $repo->set('routes', $cwd . '/routes/web.php');
-            $repo->set('views', $cwd . '/resources/views');
-            $repo->set('view_cache', $cwd . '/builds/_cache/views');
+        $this->paths = tap($this->container->make('paths'), function($repo) use ($cwd) {
+            $repo->set([
+                'cwd' => $cwd,
+                'app_path' => $cwd . '/app',
+                'env_file' => $cwd . '/.env',
+                'resource_path' => $cwd . '/resources',
+                'assets' => $cwd . '/resources/assets',
+                'builds' => $cwd . '/builds',
+                'config' => $cwd . '/config',
+                'content' => $cwd . '/resources/content',
+                'public' => $cwd . '/public',
+                'routes' => $cwd . '/routes',
+                'views' => $cwd . '/resources/views',
+                'view_cache' => $cwd . '/builds/_cache/views',
+            ]);
         });
-
-        $this->container->instance(PathRepository::class, $this->paths);
 
         return $this;
     }
@@ -125,7 +127,7 @@ class Application
     private function ensureConfigIsBindedAndLoaded()
     {
         $this->container->singleton('config', function() {
-            return new Repository();
+            return new Repository;
         });
 
         $this->config = $this->container->make('config');
@@ -161,7 +163,7 @@ class Application
             return new ConsoleApplication(
                 $this->container, 
                 new Dispatcher($this->container),
-                $this->config->get('app.version', '1.0.0'),
+                $this->config->get('app.version', ''),
             );
         });
 
@@ -278,7 +280,7 @@ class Application
         $this->container->bind('files', function() {
             return new Filesystem;
         });
-
+                
         File::ensureDirectoryExists($this->paths->get('view_cache'));
 
         $viewResolver = new EngineResolver;

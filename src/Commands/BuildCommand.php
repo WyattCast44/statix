@@ -4,7 +4,6 @@ namespace Statix\Commands;
 
 use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
 use Statix\Actions\BuildRouteFromView;
 
@@ -22,7 +21,7 @@ class BuildCommand extends Command
 
         $this->info(PHP_EOL . 'Building your site (' . $this->argument('name') . ')');
         $this->line('===============================');
-
+                
         // Clear out any old build of the same name
         File::deleteDirectory(path_build('builds', $this->argument('name')));
 
