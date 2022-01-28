@@ -17,6 +17,7 @@ use Statix\Providers\EnvFileServiceProvider;
 use NunoMaduro\Collision\Provider as Collision;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
+use Statix\Providers\RouteServiceProvider;
 
 class Application
 {
@@ -76,6 +77,7 @@ class Application
             ConfigServiceProvider::class,
             CliServiceProvider::class,
             ViewServiceProvider::class,
+            RouteServiceProvider::class,
         ])->map(function($provider) {
             
             $obj = new $provider($this->container);
