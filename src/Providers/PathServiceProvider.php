@@ -4,8 +4,8 @@ namespace Statix\Providers;
 
 use Statix\Events\PathsBound;
 use Illuminate\Config\Repository;
-use Illuminate\Support\ServiceProvider;
 use Statix\Actions\LoadConfigFiles;
+use Illuminate\Support\ServiceProvider;
 
 class PathServiceProvider extends ServiceProvider
 {
@@ -49,7 +49,5 @@ class PathServiceProvider extends ServiceProvider
         $this->app->make('statix')->paths = $paths;
 
         event(new PathsBound($paths));
-
-        app()->make(LoadConfigFiles::class)->execute();
     }
 }

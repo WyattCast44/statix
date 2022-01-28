@@ -3,7 +3,6 @@
 namespace Statix;
 
 use Exception;
-use Illuminate\Http\Request;
 use Statix\Support\Container;
 use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;

@@ -4,6 +4,7 @@ namespace Statix\Providers;
 
 use Statix\Events\ConfigBound;
 use Illuminate\Config\Repository;
+use Statix\Actions\LoadConfigFiles;
 use Illuminate\Support\ServiceProvider;
 
 class ConfigServiceProvider extends ServiceProvider
@@ -30,5 +31,7 @@ class ConfigServiceProvider extends ServiceProvider
         $this->app->make('statix')->config = $this->app->make('config');
         
         event(new ConfigBound($this->app->make('config')));
+
+        app()->make(LoadConfigFiles::class)->execute();
     }
 }

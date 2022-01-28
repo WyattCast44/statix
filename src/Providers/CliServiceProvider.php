@@ -12,10 +12,10 @@ use Statix\Commands\ServeCommand;
 use Statix\Commands\WatchCommand;
 use Statix\Commands\MakeComponent;
 use Illuminate\Console\Application;
-use Illuminate\Support\ServiceProvider;
 use Statix\Commands\BuildHttpCommand;
+use Illuminate\Support\ServiceProvider;
 use Statix\Commands\ClearCompiledViews;
-use Statix\Events\CliCommandsRegistered;
+use Statix\Events\DefaultCliCommandsRegistered;
 
 class CliServiceProvider extends ServiceProvider
 {
@@ -53,7 +53,7 @@ class CliServiceProvider extends ServiceProvider
         
         $this->registerDefaultCommands($cli);
 
-        event(new CliCommandsRegistered($cli));
+        event(new DefaultCliCommandsRegistered($cli));
     }
 
     private function registerDefaultCommands($cli): void

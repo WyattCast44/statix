@@ -25,6 +25,7 @@ class EnvFileServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // refactor to allow for .env.prod, .env.testing, etc
         if(file_exists($path = getcwd() . '/.env')) {
             (Dotenv::createImmutable($path))->safeLoad();
 
