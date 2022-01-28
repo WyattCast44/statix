@@ -3,14 +3,14 @@
 namespace Statix;
 
 use Exception;
+use Illuminate\Http\Request;
 use Statix\Support\Container;
 use Illuminate\Config\Repository;
-use Statix\Routing\RouteRegistrar;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 use Statix\Providers\CliServiceProvider;
-use Statix\Providers\ViewServiceProvider;
 use Statix\Providers\PathServiceProvider;
+use Statix\Providers\ViewServiceProvider;
 use Statix\Providers\EventServiceProvider;
 use Statix\Providers\ConfigServiceProvider;
 use Statix\Providers\EnvFileServiceProvider;
@@ -50,7 +50,7 @@ class Application
             ->ensureUserCommandsAreRegistered()
             ->ensureUserPathsAreRegistered()
             ->ensureRequiredPathsExist()
-            ->ensureRouteRegistrarIsBinded();
+            ->ensureRoutingIsSetup();
     }
 
     private function ensureContainerIsBinded()
@@ -177,12 +177,9 @@ class Application
         return $this;
     }
 
-    private function ensureRouteRegistrarIsBinded()
+    private function ensureRoutingIsSetup()
     {
-        $this->container->singleton(RouteRegistrar::class, function() {
-            return new RouteRegistrar;
-        });
-        
-        return $this;
+        // $request = Request::capture();
+        // dd($request);
     }
 }

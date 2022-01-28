@@ -24,7 +24,8 @@
         "symfony/process": "^5.0",
         "spatie/yaml-front-matter": "^2.0",
         "symfony/finder": "^5.0",
-        "guzzlehttp/guzzle": "^7.4"
+        "guzzlehttp/guzzle": "^7.4",
+        "illuminate/routing": "^8.81"
     },
     "require-dev": {
         "brianium/paratest": "^6.4",
