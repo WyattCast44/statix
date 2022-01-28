@@ -2,9 +2,8 @@
 
 namespace Statix\Providers;
 
-use Statix\Events\ConfigBound;
-use Illuminate\Config\Repository;
 use Illuminate\Routing\Router;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
@@ -16,12 +15,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('router', function() {
-            return new Router(
-                $this->app->make('events'),
-                $this->app,
-            );
-        });
+        
     }
 
     /**
@@ -31,6 +25,14 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->app->singleton('router', function() {
+            return new Router(
+                new Dispatcher,
+            );
+        });
+
         require path('routes') . '\web.php';
+
+        // dd($this->app->make('router'));
     }
 }

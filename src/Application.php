@@ -168,7 +168,7 @@ class Application
 
     private function ensureRequiredPathsExist()
     {
-        collect(['routes', 'views'])->each(function($path) {
+        collect(['routes', 'views', 'public'])->each(function($path) {
             if(!is_dir($this->paths->get($path))) {
                 if(!file_exists($this->paths->get($path))) {
                     throw new Exception("The '$path' path must be defined and exist. Currently set to: " . $this->paths->get($path));
