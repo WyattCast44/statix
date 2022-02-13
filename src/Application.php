@@ -53,7 +53,8 @@ class Application
             ->ensureUserServiceProvidersAreRegistered()
             ->ensureUserServiceProvidersAreBooted()
             ->ensureUserCommandsAreRegistered()
-            ->ensureUserPathsAreRegistered();
+            ->ensureUserPathsAreRegistered()
+            ->ensureUserHelpersAreLoaded();
     }
 
     private function ensureContainerIsBinded()
@@ -177,6 +178,15 @@ class Application
 
         event(new PathsRegistered($this->paths));
 
+        return $this;
+    }
+
+    private function ensureUserHelpersAreLoaded()
+    {
+        if(file_exists($path = $this->paths->get('app_path') . '/helpers.php')) {
+            require_once $path;
+        }
+        
         return $this;
     }
 }

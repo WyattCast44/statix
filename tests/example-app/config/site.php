@@ -100,4 +100,17 @@ return [
         //
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Application Test
+    |--------------------------------------------------------------------------
+    |
+    | The following values are simply for use in unit tests
+    |
+    */
+    
+    'foo' => 'bar',
+    
+    'bar' => env('TEST_CONFIG_FROM_ENV'),
+
 ];

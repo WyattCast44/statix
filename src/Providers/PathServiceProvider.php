@@ -40,6 +40,7 @@ class PathServiceProvider extends ServiceProvider
                 'config' => $cwd . '\config',
                 'content' => $cwd . '\resources\content',
                 'public' => $cwd . '\public',
+                'storage' => $cwd . '\storage',
                 'routes' => $cwd . '\routes',
                 'views' => $cwd . '\resources\views',
                 'view_cache' => $cwd . '\storage\framework\views',

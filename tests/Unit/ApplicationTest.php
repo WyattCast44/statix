@@ -9,11 +9,6 @@ use Illuminate\Config\Repository;
 
 class ApplicationTest extends TestCase
 {
-    public function setUp(): void
-    {
-        chdir(__DIR__ . '/../example-app');
-    }
-
     public function test_application_has_static_new()
     {
         $this->assertTrue(method_exists(Application::class, 'new'));

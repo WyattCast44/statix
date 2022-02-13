@@ -15,6 +15,7 @@ use Illuminate\Console\Application;
 use Statix\Commands\BuildHttpCommand;
 use Illuminate\Support\ServiceProvider;
 use Statix\Commands\ClearCompiledViews;
+use Statix\Commands\MakeHelpersFile;
 use Statix\Events\DefaultCliCommandsRegistered;
 
 class CliServiceProvider extends ServiceProvider
@@ -42,8 +43,7 @@ class CliServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $cli = tap($this->app->make('cli'))
-            ->setName($this->app->make('config')->get('site.name', 'Statix Application'));
+        $cli = $this->app->make('cli');
 
         $cli->app = $cli->getLaravel();
 
@@ -66,6 +66,7 @@ class CliServiceProvider extends ServiceProvider
             MakeCommand::class,
             MakeComponent::class,
             MakeEvent::class,
+            MakeHelpersFile::class,
             MakeProvider::class,
             ServeCommand::class,
             WatchCommand::class,
