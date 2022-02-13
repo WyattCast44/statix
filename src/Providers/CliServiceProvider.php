@@ -12,10 +12,12 @@ use Statix\Commands\ServeCommand;
 use Statix\Commands\WatchCommand;
 use Statix\Commands\MakeComponent;
 use Illuminate\Console\Application;
-use Illuminate\Support\ServiceProvider;
 use Statix\Commands\BuildHttpCommand;
+use Illuminate\Support\ServiceProvider;
 use Statix\Commands\ClearCompiledViews;
-use Statix\Events\CliCommandsRegistered;
+use Statix\Commands\MakeEventsFile;
+use Statix\Commands\MakeHelpersFile;
+use Statix\Events\DefaultCliCommandsRegistered;
 
 class CliServiceProvider extends ServiceProvider
 {
@@ -27,11 +29,11 @@ class CliServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('cli', function() {
-            return new Application(
+            return tap(new Application(
                 $this->app, 
                 $this->app->make('events'),
                 $this->app->make('config')->get('site.version', ''),
-            );
+            ))->setName($this->app->make('config')->get('site.name'));
         });
     }
 
@@ -42,8 +44,7 @@ class CliServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $cli = tap($this->app->make('cli'))
-            ->setName($this->app->make('config')->get('site.name', 'Statix Application'));
+        $cli = $this->app->make('cli');
 
         $cli->app = $cli->getLaravel();
 
@@ -53,7 +54,7 @@ class CliServiceProvider extends ServiceProvider
         
         $this->registerDefaultCommands($cli);
 
-        event(new CliCommandsRegistered($cli));
+        event(new DefaultCliCommandsRegistered($cli));
     }
 
     private function registerDefaultCommands($cli): void
@@ -66,6 +67,8 @@ class CliServiceProvider extends ServiceProvider
             MakeCommand::class,
             MakeComponent::class,
             MakeEvent::class,
+            MakeEventsFile::class,
+            MakeHelpersFile::class,
             MakeProvider::class,
             ServeCommand::class,
             WatchCommand::class,

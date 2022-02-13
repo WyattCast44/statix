@@ -2,18 +2,23 @@
 
 namespace Statix;
 
-use Exception;
 use Statix\Support\Container;
 use Illuminate\Config\Repository;
-use Statix\Routing\RouteRegistrar;
 use Illuminate\Support\Collection;
+use Statix\Events\PathsRegistered;
+use Statix\Events\ProvidersBooted;
+use Statix\Events\ProvidersRegistered;
 use Illuminate\Support\Facades\Facade;
+use Statix\Events\CliCommandsRegistered;
 use Statix\Providers\CliServiceProvider;
-use Statix\Providers\ViewServiceProvider;
+use Statix\Events\DefaultProvidersBooted;
 use Statix\Providers\PathServiceProvider;
+use Statix\Providers\ViewServiceProvider;
 use Statix\Providers\EventServiceProvider;
+use Statix\Providers\RouteServiceProvider;
 use Statix\Providers\ConfigServiceProvider;
 use Statix\Providers\EnvFileServiceProvider;
+use Statix\Events\DefaultProvidersRegistered;
 use NunoMaduro\Collision\Provider as Collision;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
@@ -49,8 +54,7 @@ class Application
             ->ensureUserServiceProvidersAreBooted()
             ->ensureUserCommandsAreRegistered()
             ->ensureUserPathsAreRegistered()
-            ->ensureRequiredPathsExist()
-            ->ensureRouteRegistrarIsBinded();
+            ->ensureUserHelpersAreLoaded();
     }
 
     private function ensureContainerIsBinded()
@@ -76,6 +80,7 @@ class Application
             ConfigServiceProvider::class,
             CliServiceProvider::class,
             ViewServiceProvider::class,
+            RouteServiceProvider::class,
         ])->map(function($provider) {
             
             $obj = new $provider($this->container);
@@ -87,6 +92,8 @@ class Application
             return $obj;
         });
 
+        event(new DefaultProvidersRegistered($this->defaultProviders));
+
         return $this;
     }
 
@@ -97,6 +104,8 @@ class Application
                 $provider->boot();
             }
         });
+
+        event(new DefaultProvidersBooted($this->defaultProviders));
 
         return $this;
     }
@@ -130,6 +139,8 @@ class Application
 
         $this->providers = $items;
 
+        event(new ProvidersRegistered($this->providers));
+
         return $this;
     }
 
@@ -141,6 +152,8 @@ class Application
             }
         });
 
+        event(new ProvidersBooted($this->providers));
+
         return $this;
     }
 
@@ -149,6 +162,8 @@ class Application
         if($this->config->has('site.commands')) {
             $this->cli->resolveCommands($this->config->get('site.commands', []));
         }
+
+        event(new CliCommandsRegistered($this->cli));
 
         return $this;
     }
@@ -161,27 +176,16 @@ class Application
             });
         }
 
-        return $this;
-    }
-
-    private function ensureRequiredPathsExist()
-    {
-        collect(['routes', 'views'])->each(function($path) {
-            if(!is_dir($this->paths->get($path))) {
-                if(!file_exists($this->paths->get($path))) {
-                    throw new Exception("The '$path' path must be defined and exist. Currently set to: " . $this->paths->get($path));
-                }
-            }
-        });
+        event(new PathsRegistered($this->paths));
 
         return $this;
     }
 
-    private function ensureRouteRegistrarIsBinded()
+    private function ensureUserHelpersAreLoaded()
     {
-        $this->container->singleton(RouteRegistrar::class, function() {
-            return new RouteRegistrar;
-        });
+        if(file_exists($path = $this->paths->get('app_path') . '/helpers.php')) {
+            require_once $path;
+        }
         
         return $this;
     }

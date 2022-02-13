@@ -2,10 +2,10 @@
 
 namespace Statix\Providers;
 
+use Exception;
 use Statix\Events\PathsBound;
 use Illuminate\Config\Repository;
 use Illuminate\Support\ServiceProvider;
-use Statix\Actions\LoadConfigFiles;
 
 class PathServiceProvider extends ServiceProvider
 {
@@ -40,6 +40,7 @@ class PathServiceProvider extends ServiceProvider
                 'config' => $cwd . '\config',
                 'content' => $cwd . '\resources\content',
                 'public' => $cwd . '\public',
+                'storage' => $cwd . '\storage',
                 'routes' => $cwd . '\routes',
                 'views' => $cwd . '\resources\views',
                 'view_cache' => $cwd . '\storage\framework\views',
@@ -50,6 +51,19 @@ class PathServiceProvider extends ServiceProvider
 
         event(new PathsBound($paths));
 
-        app()->make(LoadConfigFiles::class)->execute();
+        $this->ensureRequiredPathsExist($paths);
+    }
+
+    private function ensureRequiredPathsExist($paths)
+    {
+        collect(['routes', 'views', 'public'])->each(function($path) use ($paths) {
+            if(!is_dir($paths->get($path))) {
+                if(!file_exists($paths->get($path))) {
+                    throw new Exception("The '$path' path must be defined and exist. Currently set to: " . $paths->get($path));
+                }
+            }
+        });
+
+        return $this;
     }
 }

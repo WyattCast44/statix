@@ -11,6 +11,10 @@ class LoadConfigFiles extends BaseAction
     {
         $path = $this->app->make('paths')->get('config');
 
+        if(!is_dir($path)) {
+            return;
+        }
+
         $items = collect(scandir($path))
             ->reject(function ($file) {
                 return is_dir($file);

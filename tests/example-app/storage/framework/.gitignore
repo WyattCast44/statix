@@ -1,2 +1,2 @@
-*.php
-*.blade.php
+/cache
+/views
