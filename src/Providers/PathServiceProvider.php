@@ -2,9 +2,9 @@
 
 namespace Statix\Providers;
 
+use Exception;
 use Statix\Events\PathsBound;
 use Illuminate\Config\Repository;
-use Statix\Actions\LoadConfigFiles;
 use Illuminate\Support\ServiceProvider;
 
 class PathServiceProvider extends ServiceProvider
@@ -49,5 +49,20 @@ class PathServiceProvider extends ServiceProvider
         $this->app->make('statix')->paths = $paths;
 
         event(new PathsBound($paths));
+
+        $this->ensureRequiredPathsExist($paths);
+    }
+
+    private function ensureRequiredPathsExist($paths)
+    {
+        collect(['routes', 'views', 'public'])->each(function($path) use ($paths) {
+            if(!is_dir($paths->get($path))) {
+                if(!file_exists($paths->get($path))) {
+                    throw new Exception("The '$path' path must be defined and exist. Currently set to: " . $paths->get($path));
+                }
+            }
+        });
+
+        return $this;
     }
 }

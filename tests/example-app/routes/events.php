@@ -1,10 +1,10 @@
 <?php
 
+use Statix\Events\ProvidersBooted;
 use Illuminate\Support\Facades\Event;
-use Statix\Events\CliBound;
-use Statix\Events\CliCommandsRegistered;
-use Statix\Events\ConfigFilesLoaded;
+use Statix\Events\DefaultProvidersBooted;
+use Illuminate\Console\Events\ArtisanStarting;
 
-Event::listen(function(CliCommandsRegistered $event) {
+Event::listen(function(ArtisanStarting $event) {
     // dd($event);
 });

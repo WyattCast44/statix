@@ -27,8 +27,8 @@ class EnvFileServiceProvider extends ServiceProvider
     {
         // refactor to allow for .env.prod, .env.testing, etc
         if(file_exists($path = getcwd() . '/.env')) {
-            (Dotenv::createImmutable($path))->safeLoad();
-
+            (Dotenv::createImmutable(getcwd()))->safeLoad();
+            
             event(new EnvFileLoaded);
         }
     }

@@ -1,8 +1,0 @@
-.env
-/builds/_cache
-/node_modules
-/vendor
-npm-debug.log
-yarn-error.log
-/.idea
-/.vscode

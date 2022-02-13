@@ -27,11 +27,11 @@ class CliServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('cli', function() {
-            return new Application(
+            return tap(new Application(
                 $this->app, 
                 $this->app->make('events'),
                 $this->app->make('config')->get('site.version', ''),
-            );
+            ))->setName($this->app->make('config')->get('site.name'));
         });
     }
 
