@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Statix SSG Example Application'),
+    'name' => env('APP_NAME', 'Statix Example App'),
 
     /*
     |--------------------------------------------------------------------------
@@ -85,6 +85,8 @@ return [
         //
     ],
 
+    'autodiscover_commands' => true,
+
     /*
     |--------------------------------------------------------------------------
     | Application Paths
@@ -97,6 +99,18 @@ return [
     */
 
     'paths' => [
+        //
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Providers
+    |--------------------------------------------------------------------------
+    |
+    | The following values are simply for use in unit tests
+    |
+    */
+    'providers' => [
         //
     ],
 

@@ -4,8 +4,9 @@ namespace Statix\Support;
 
 use Illuminate\Support\Str;
 use Illuminate\Container\Container as BaseContainer;
+use Illuminate\Contracts\Foundation\Application;
 
-class Container extends BaseContainer
+class Container extends BaseContainer implements Application
 {
     /**
      * Get the version number of the application.
@@ -116,7 +117,7 @@ class Container extends BaseContainer
      */
     public function runningUnitTests()
     {
-        return false;
+        return env('APP_ENV') === 'testing';
     }
 
     /**

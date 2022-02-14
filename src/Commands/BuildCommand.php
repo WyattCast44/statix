@@ -31,17 +31,21 @@ class BuildCommand extends Command
         // Copy any public assets, css, js, favicon, etc
         $this->copyPublicAssetsDirectory();
         
-        require path('cwd') . '/routes/web.php';
+        require_once path('cwd') . '/routes/web.php';
+
+        dd(app()->make(RouteRegistrar::class));
 
         collect(app()->make(RouteRegistrar::class)->routes)->each(function($route, $uri) {
             
             if($route['strategy'] === 'view'):
 
                 (new BuildRouteFromView($this, $route))->execute();
-            
+                
                 return true;
-
+                
             endif;
+
+            
 
             if($route['strategy'] === 'sequence') {
                 

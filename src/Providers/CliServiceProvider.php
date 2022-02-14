@@ -11,16 +11,31 @@ use Statix\Commands\MakeProvider;
 use Statix\Commands\ServeCommand;
 use Statix\Commands\WatchCommand;
 use Statix\Commands\MakeComponent;
+use Statix\Commands\MakeEventsFile;
 use Illuminate\Console\Application;
+use Statix\Commands\MakeHelpersFile;
 use Statix\Commands\BuildHttpCommand;
 use Illuminate\Support\ServiceProvider;
 use Statix\Commands\ClearCompiledViews;
-use Statix\Commands\MakeEventsFile;
-use Statix\Commands\MakeHelpersFile;
 use Statix\Events\DefaultCliCommandsRegistered;
 
 class CliServiceProvider extends ServiceProvider
 {
+    protected $defaultCommands = [
+        BuildCommand::class,
+        BuildHttpCommand::class,
+        ClearBuilds::class,
+        ClearCompiledViews::class,
+        MakeCommand::class,
+        MakeComponent::class,
+        MakeEvent::class,
+        MakeEventsFile::class,
+        MakeHelpersFile::class,
+        MakeProvider::class,
+        ServeCommand::class,
+        WatchCommand::class,
+    ];
+
     /**
      * Register any application services.
      *
@@ -52,26 +67,8 @@ class CliServiceProvider extends ServiceProvider
 
         event(new CliBound($cli));
         
-        $this->registerDefaultCommands($cli);
+        $cli->resolveCommands($this->defaultCommands);
 
         event(new DefaultCliCommandsRegistered($cli));
-    }
-
-    private function registerDefaultCommands($cli): void
-    {
-        $cli->resolveCommands([
-            BuildCommand::class,
-            BuildHttpCommand::class,
-            ClearBuilds::class,
-            ClearCompiledViews::class,
-            MakeCommand::class,
-            MakeComponent::class,
-            MakeEvent::class,
-            MakeEventsFile::class,
-            MakeHelpersFile::class,
-            MakeProvider::class,
-            ServeCommand::class,
-            WatchCommand::class,
-        ]);
     }
 }

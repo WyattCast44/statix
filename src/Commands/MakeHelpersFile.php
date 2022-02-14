@@ -13,14 +13,14 @@ class MakeHelpersFile extends Command
 
     public function isHidden()
     {
-        return file_exists(app_path('/helpers.php'));
+        return file_exists(app_path('helpers.php'));
     }
 
     public function handle()
     {
         File::ensureDirectoryExists(path_join('app_path'));
 
-        $path = app_path('/helpers.php');
+        $path = app_path('helpers.php');
 
         if(file_exists($path)) {
             $this->error(PHP_EOL . 'File already exists, delete file and try again');

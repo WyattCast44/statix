@@ -142,3 +142,14 @@ Route::redirect('/old', '/new', function() {
 
 - spin up local php server with the document route being a fake index.php
 - use http client to make request to page "/about"
+
+# File based routing
+- next.js
+
+# Testing
+
+To run the application test suite, run the following command. 
+
+```bash
+./vendor/bin/phpunit
+```

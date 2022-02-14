@@ -15,9 +15,4 @@ abstract class TestCase extends BaseTestCase
 
         $this->app = Application::new();
     }
-
-    public function app(): Application
-    {
-        return Application::new();
-    }
 }

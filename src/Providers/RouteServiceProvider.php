@@ -27,12 +27,11 @@ class RouteServiceProvider extends ServiceProvider
     {
         $this->app->singleton('router', function() {
             return new Router(
-                new Dispatcher,
+                new Dispatcher($this->app),
+                $this->app,
             );
         });
 
         require path('routes') . '\web.php';
-
-        // dd($this->app->make('router'));
     }
 }

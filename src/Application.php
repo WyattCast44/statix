@@ -7,6 +7,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
 use Statix\Events\PathsRegistered;
 use Statix\Events\ProvidersBooted;
+use Statix\Events\HelpersFileLoaded;
 use Statix\Events\ProvidersRegistered;
 use Illuminate\Support\Facades\Facade;
 use Statix\Events\CliCommandsRegistered;
@@ -22,6 +23,8 @@ use Statix\Events\DefaultProvidersRegistered;
 use NunoMaduro\Collision\Provider as Collision;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
+use Statix\Providers\UserServiceProvidersProvider;
+use Tonysm\TailwindCss\TailwindCssServiceProvider;
 
 class Application
 {
@@ -50,11 +53,11 @@ class Application
             ->ensureContainerIsBinded()
             ->ensureDefaultServiceProvidersAreRegistered()
             ->ensureDefaultServiceProvidersAreBooted()
-            ->ensureUserServiceProvidersAreRegistered()
-            ->ensureUserServiceProvidersAreBooted()
+            ->ensureUserHelpersFileIsLoaded()
+            // ->ensureUserServiceProvidersAreRegistered()
+            // ->ensureUserServiceProvidersAreBooted()
             ->ensureUserCommandsAreRegistered()
-            ->ensureUserPathsAreRegistered()
-            ->ensureUserHelpersAreLoaded();
+            ->ensureUserPathsAreRegistered();
     }
 
     private function ensureContainerIsBinded()
@@ -81,6 +84,7 @@ class Application
             CliServiceProvider::class,
             ViewServiceProvider::class,
             RouteServiceProvider::class,
+            UserServiceProvidersProvider::class,
         ])->map(function($provider) {
             
             $obj = new $provider($this->container);
@@ -110,50 +114,14 @@ class Application
         return $this;
     }
 
-    public function ensureUserServiceProvidersAreRegistered()
+    private function ensureUserHelpersFileIsLoaded()
     {
-        $path = $this->paths->get('app_path') . '/Providers';
+        if(file_exists($path = $this->paths->get('app_path') . '/helpers.php')) {
+            require_once $path;
 
-        if(!is_dir($path)) {
-            $this->providers = collect();
-
-            return $this;
+            event(new HelpersFileLoaded);
         }
-
-        $items = collect(scandir($path))
-            ->reject(function ($file) {
-                return is_dir($file);
-            })->reject(function ($file) {
-                return (pathinfo($file)['extension'] != 'php');
-            })->map(function($file) {
-                $class = "App\\Providers\\" . basename($file, '.php');
-                
-                $obj = new $class($this->container);
-
-                if(method_exists($obj, 'register')) {
-                    $obj->register();
-                }
-
-                return $obj;
-            });
-
-        $this->providers = $items;
-
-        event(new ProvidersRegistered($this->providers));
-
-        return $this;
-    }
-
-    public function ensureUserServiceProvidersAreBooted()
-    {
-        $this->providers->each(function ($provider) {
-            if(method_exists($provider, 'boot')) {
-                $provider->boot();
-            }
-        });
-
-        event(new ProvidersBooted($this->providers));
-
+        
         return $this;
     }
 
@@ -161,6 +129,25 @@ class Application
     {
         if($this->config->has('site.commands')) {
             $this->cli->resolveCommands($this->config->get('site.commands', []));
+        }
+
+        if($this->config->get('site.autodiscover_commands', false)) {
+
+            $path = $this->paths->get('app_path') . '/Console/Commands';
+            
+            if(file_exists($path)) {            
+
+                $items = collect(scandir($path))
+                    ->reject(function ($file) {
+                        return is_dir($file);
+                    })->reject(function ($file) {
+                        return (pathinfo($file)['extension'] != 'php');
+                    })->map(function ($file) {
+                        return "App\\Console\\Commands\\" . basename($file, '.php');
+                    });
+    
+                $this->cli->resolveCommands($items->toArray());
+            }
         }
 
         event(new CliCommandsRegistered($this->cli));
@@ -178,15 +165,6 @@ class Application
 
         event(new PathsRegistered($this->paths));
 
-        return $this;
-    }
-
-    private function ensureUserHelpersAreLoaded()
-    {
-        if(file_exists($path = $this->paths->get('app_path') . '/helpers.php')) {
-            require_once $path;
-        }
-        
         return $this;
     }
 }

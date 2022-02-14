@@ -36,7 +36,22 @@ if (! function_exists('app_path')) {
      */
     function app_path($path = ''): string
     {
-        return app()->make('paths')->get('app_path') . $path;
+        return app()->make('paths')->get('app_path') . '/' . $path;
+    }
+
+}
+
+if (! function_exists('resource_path')) {
+
+    /**
+     * Get the path to the application folder.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function resource_path($path = ''): string
+    {
+        return app()->make('paths')->get('resource_path') . '/' . $path;
     }
 
 }
@@ -68,7 +83,7 @@ if (! function_exists('base_path')) {
      */
     function base_path($path = ''): string
     {
-        return app()->make('paths')->get('cwd') . $path;
+        return app()->make('paths')->get('cwd') . '/' .  $path;
     }
 
 }
@@ -83,7 +98,7 @@ if (! function_exists('public_path')) {
      */
     function public_path($path = ''): string
     {
-        return app()->make('paths')->get('public') . $path;
+        return app()->make('paths')->get('public') . '/' . $path;
     }
 
 }
@@ -125,7 +140,7 @@ if (! function_exists('config_path')) {
      */
     function config_path($path = ''): string
     {
-        return app()->make('paths')->get('config') . $path;
+        return app()->make('paths')->get('config') . '/' . $path;
     }
 
 }
