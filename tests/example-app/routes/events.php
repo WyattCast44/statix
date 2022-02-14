@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Console\Events\ArtisanStarting;
+use Statix\Events\PathsRegistered;
 use Illuminate\Support\Facades\Event;
-use Statix\Events\ProvidersRegistered;
 
-// Event::listen(function(ArtisanStarting $event) {
+// Event::listen(function(PathsRegistered $event) {
 //     dd($event);
 // });

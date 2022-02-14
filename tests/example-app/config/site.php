@@ -81,11 +81,11 @@ return [
     |
     */
 
+    'autodiscover_commands' => true,
+
     'commands' => [
         //
     ],
-
-    'autodiscover_commands' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -99,7 +99,7 @@ return [
     */
 
     'paths' => [
-        //
+        'name' => 'sed'
     ],
 
     /*
@@ -110,6 +110,9 @@ return [
     | The following values are simply for use in unit tests
     |
     */
+
+    'autodiscover_providers' => true,
+
     'providers' => [
         //
     ],

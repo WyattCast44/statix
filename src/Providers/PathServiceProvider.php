@@ -5,6 +5,7 @@ namespace Statix\Providers;
 use Exception;
 use Statix\Events\PathsBound;
 use Illuminate\Config\Repository;
+use Statix\Events\PathsRegistered;
 use Illuminate\Support\ServiceProvider;
 
 class PathServiceProvider extends ServiceProvider

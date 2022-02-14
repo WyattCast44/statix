@@ -36,6 +36,10 @@ class UserServiceProvidersProvider extends ServiceProvider
 
     protected function discoverProvidersInAppNamespace()
     {
+        if(!$this->app->make('config')->get('site.autodiscover_providers', false)) {
+            return $this;
+        }
+
         $path = $this->app->make('paths')->get('app_path') . '/Providers';
 
         if(!is_dir($path)) {

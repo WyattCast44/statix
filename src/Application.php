@@ -8,8 +8,8 @@ use Illuminate\Support\Collection;
 use Statix\Events\PathsRegistered;
 use Statix\Events\ProvidersBooted;
 use Statix\Events\HelpersFileLoaded;
-use Statix\Events\ProvidersRegistered;
 use Illuminate\Support\Facades\Facade;
+use Statix\Events\ProvidersRegistered;
 use Statix\Events\CliCommandsRegistered;
 use Statix\Providers\CliServiceProvider;
 use Statix\Events\DefaultProvidersBooted;
@@ -21,10 +21,9 @@ use Statix\Providers\ConfigServiceProvider;
 use Statix\Providers\EnvFileServiceProvider;
 use Statix\Events\DefaultProvidersRegistered;
 use NunoMaduro\Collision\Provider as Collision;
+use Statix\Providers\UserServiceProvidersProvider;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
-use Statix\Providers\UserServiceProvidersProvider;
-use Tonysm\TailwindCss\TailwindCssServiceProvider;
 
 class Application
 {
@@ -53,11 +52,10 @@ class Application
             ->ensureContainerIsBinded()
             ->ensureDefaultServiceProvidersAreRegistered()
             ->ensureDefaultServiceProvidersAreBooted()
+            ->ensureUserPathsAreRegistered()
+            ->ensureUserServiceProvidersAreRegistered()
             ->ensureUserHelpersFileIsLoaded()
-            // ->ensureUserServiceProvidersAreRegistered()
-            // ->ensureUserServiceProvidersAreBooted()
-            ->ensureUserCommandsAreRegistered()
-            ->ensureUserPathsAreRegistered();
+            ->ensureUserCommandsAreRegistered();
     }
 
     private function ensureContainerIsBinded()
@@ -83,8 +81,7 @@ class Application
             ConfigServiceProvider::class,
             CliServiceProvider::class,
             ViewServiceProvider::class,
-            RouteServiceProvider::class,
-            UserServiceProvidersProvider::class,
+            RouteServiceProvider::class
         ])->map(function($provider) {
             
             $obj = new $provider($this->container);
@@ -110,6 +107,69 @@ class Application
         });
 
         event(new DefaultProvidersBooted($this->defaultProviders));
+
+        return $this;
+    }
+
+    private function ensureUserPathsAreRegistered()
+    {   
+        if($this->config->has('site.paths')) {
+            collect($this->config->get('site.paths', []))->each(function($path, $key) {
+                $this->paths->set($key, $path, true);
+            });
+
+            event(new PathsRegistered($this->paths));
+        }
+
+        return $this;
+    }
+
+    private function ensureUserServiceProvidersAreRegistered()
+    {
+        $path = $this->paths->get('app_path') . '/Providers';
+
+        if(!is_dir($path)) {
+
+            $this->providers = collect();
+
+        } else {
+
+            $this->providers = collect(scandir($path))
+                ->reject(function ($file) {
+                    return is_dir($file);
+                })->reject(function ($file) {
+                    return (pathinfo($file)['extension'] != 'php');
+                })->map(function($file) {
+                    return "App\\Providers\\" . basename($file, '.php');
+                });
+
+        }
+
+        if($this->config->has('site.providers')) {
+            $this->providers = $this->providers->concat($this->config->get('site.providers', []));
+        }
+
+        $this->providers = $this->providers->map(function($provider) {
+            $obj = new $provider($this->app);
+
+            if(method_exists($obj, 'register')) {
+                $obj->register();
+            }
+
+            return $obj;
+        });
+
+        event(new ProvidersRegistered($this->providers));
+
+        $this->providers = $this->providers->map(function($provider) {
+            if(method_exists($provider, 'boot')) {
+                $provider->boot();
+            }
+
+            return $provider;
+        });
+
+        event(new ProvidersBooted($this->providers));
 
         return $this;
     }
@@ -151,19 +211,6 @@ class Application
         }
 
         event(new CliCommandsRegistered($this->cli));
-
-        return $this;
-    }
-
-    private function ensureUserPathsAreRegistered()
-    {
-        if($this->config->has('site.paths')) {
-            collect($this->config->get('site.paths', []))->each(function($path, $key) {
-                $this->paths->set($key, $path, true);
-            });
-        }
-
-        event(new PathsRegistered($this->paths));
 
         return $this;
     }
