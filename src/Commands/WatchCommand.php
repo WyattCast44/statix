@@ -46,6 +46,8 @@ class WatchCommand extends Command
         } 
 
         try {
+            require path('routes') . '/web.php';
+            
             $this->call('build', [
                 'name' => $this->argument('build'),
             ]);
@@ -66,6 +68,8 @@ class WatchCommand extends Command
 
                 app()->make(LoadConfigFiles::class)->execute();
             }
+            
+            require path('routes') . '/web.php';
 
             $this->call('build', [
                 'name' => $this->argument('build'),

@@ -5,6 +5,7 @@ namespace Statix\Providers;
 use Illuminate\Routing\Router;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
+use Statix\Routing\RouteRegistrar;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -14,8 +15,10 @@ class RouteServiceProvider extends ServiceProvider
      * @return void
      */
     public function register()
-    {
-        
+    {   
+        $this->app->singleton(RouteRegistrar::class, function() {
+            return new RouteRegistrar;
+        });
     }
 
     /**
@@ -32,6 +35,6 @@ class RouteServiceProvider extends ServiceProvider
             );
         });
 
-        require path('routes') . '\web.php';
+        $this->app->make('statix')->routes = $this->app->make(RouteRegistrar::class);
     }
 }

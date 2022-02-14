@@ -31,9 +31,7 @@ class BuildCommand extends Command
         // Copy any public assets, css, js, favicon, etc
         $this->copyPublicAssetsDirectory();
         
-        require_once path('cwd') . '/routes/web.php';
-
-        dd(app()->make(RouteRegistrar::class));
+        require_once path('routes') . '/web.php';
 
         collect(app()->make(RouteRegistrar::class)->routes)->each(function($route, $uri) {
             
@@ -43,9 +41,7 @@ class BuildCommand extends Command
                 
                 return true;
                 
-            endif;
-
-            
+            endif;            
 
             if($route['strategy'] === 'sequence') {
                 

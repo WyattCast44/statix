@@ -14,7 +14,7 @@
         <p>Lorem ipsum dolor sit amet consectetur <a href="#">adipisicing elit</a>. Doloribus mollitia, necessitatibus quibusdam in eum excepturi ut fuga impedit magnam omnis! Quam eum placeat eos repellendus vitae maiores voluptatum asperiores illum?</p>
 
         <p>From config: {{ config('site.name') }}</p>
-
+        
     </div>
     
 @endsection
