@@ -13,6 +13,7 @@ use Statix\Commands\WatchCommand;
 use Statix\Commands\MakeComponent;
 use Statix\Commands\MakeEventsFile;
 use Illuminate\Console\Application;
+use Illuminate\Support\Facades\Artisan;
 use Statix\Commands\MakeHelpersFile;
 use Statix\Commands\BuildHttpCommand;
 use Illuminate\Support\ServiceProvider;
@@ -50,6 +51,8 @@ class CliServiceProvider extends ServiceProvider
                 $this->app->make('config')->get('site.version', ''),
             ))->setName($this->app->make('config')->get('site.name'));
         });
+
+        
     }
 
     /**

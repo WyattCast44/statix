@@ -1,5 +1,8 @@
 <?php
 
+use Hammerstone\Sidecar\Commands\Install;
+use Hammerstone\Sidecar\Providers\SidecarServiceProvider;
+
 return [
     
     /*

@@ -150,7 +150,7 @@ class Application
         }
 
         $this->providers = $this->providers->map(function($provider) {
-            $obj = new $provider($this->app);
+            $obj = new $provider($this->container);
 
             if(method_exists($obj, 'register')) {
                 $obj->register();
