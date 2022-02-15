@@ -21,6 +21,11 @@ class Page
         // // array_push($posts, ['body' => $object->body()], $object->matter());
     }
 
+    public function matter()
+    {
+        return $this->document->matter(...func_get_args());
+    }
+
     public function transformContentsToDocument()
     {
         $pattern = '/^[\s\r\n]?---[\s\r\n]?$/sm';
