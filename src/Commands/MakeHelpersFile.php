@@ -18,7 +18,7 @@ class MakeHelpersFile extends Command
 
     public function handle()
     {
-        File::ensureDirectoryExists(path_join('app_path'));
+        File::ensureDirectoryExists(app_path());
 
         $path = app_path('helpers.php');
 
