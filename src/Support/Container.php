@@ -78,9 +78,9 @@ class Container extends BaseContainer implements Application
      *
      * @return string
      */
-    public function storagePath()
+    public function storagePath($path = '')
     {
-        return path('storage');
+        return path('storage') . '/' . $path;
     }
 
     /**
@@ -118,6 +118,16 @@ class Container extends BaseContainer implements Application
     public function runningUnitTests()
     {
         return env('APP_ENV') === 'testing';
+    }
+
+    /**
+     * Get an instance of the maintenance mode manager implementation.
+     *
+     * @return \Illuminate\Contracts\Foundation\MaintenanceMode
+     */
+    public function maintenanceMode()
+    {
+        return null;
     }
 
     /**
@@ -290,6 +300,17 @@ class Container extends BaseContainer implements Application
     public function shouldSkipMiddleware()
     {
         return false;
+    }
+
+    /**
+     * Register a terminating callback with the application.
+     *
+     * @param  callable|string  $callback
+     * @return \Illuminate\Contracts\Foundation\Application
+     */
+    public function terminating($callback)
+    {
+        //
     }
 
     /**

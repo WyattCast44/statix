@@ -11,7 +11,7 @@ class MakeHelpersFile extends Command
 
     protected $description = 'Create a new helpers.php file';
 
-    public function isHidden()
+    public function isHidden(): bool
     {
         return file_exists(app_path('helpers.php'));
     }
