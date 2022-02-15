@@ -16,13 +16,12 @@ class Page
         private string $path,
         private $contents,
     ) {
-        $this->parser();
-        // $this->document = YamlFrontMatter::parse($this->contents);
+        $this->document = $this->transformContentsToDocument();
         
-        // array_push($posts, ['body' => $object->body()], $object->matter());
+        // // array_push($posts, ['body' => $object->body()], $object->matter());
     }
 
-    public function parser()
+    public function transformContentsToDocument()
     {
         $pattern = '/^[\s\r\n]?---[\s\r\n]?$/sm';
 
@@ -32,9 +31,7 @@ class Page
             return new Document([], $this->contents);
         }
 
-        dd(Blade::render(trim($parts[1])));
-
-        $matter = Yaml::parse(trim($parts[1]));
+        $matter = Yaml::parse(Blade::render(trim($parts[1])));
 
         $body = implode(PHP_EOL.'---'.PHP_EOL, array_slice($parts, 2));
 
@@ -43,7 +40,7 @@ class Page
 
     public function hasFrontMatter(): bool
     {
-        //
+        return $this->document->matter === [];
     }
 
     public function getPath(): string 
