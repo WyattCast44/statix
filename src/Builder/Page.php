@@ -6,7 +6,6 @@ use Illuminate\Support\Carbon;
 use Symfony\Component\Yaml\Yaml;
 use Spatie\YamlFrontMatter\Document;
 use Illuminate\Support\Facades\Blade;
-use Spatie\YamlFrontMatter\YamlFrontMatter;
 
 class Page
 {
@@ -17,13 +16,11 @@ class Page
         private $contents,
     ) {
         $this->document = $this->transformContentsToDocument();
-        
-        // // array_push($posts, ['body' => $object->body()], $object->matter());
     }
 
-    public function matter()
+    public function matter(string $key = null, $default = null)
     {
-        return $this->document->matter(...func_get_args());
+        return $this->document->matter($key, $default);
     }
 
     public function transformContentsToDocument()
