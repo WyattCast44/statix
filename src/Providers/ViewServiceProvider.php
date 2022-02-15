@@ -83,5 +83,7 @@ class ViewServiceProvider extends ServiceProvider
                 public static function getFacadeAccessor() { return parent::getFacadeAccessor(); }
             })::getFacadeAccessor()
         );
+
+        $this->app->make('config')->set('view.compiled', $this->app->make('paths')->get('view_cache'));
     }
 }
