@@ -47,6 +47,6 @@ class BuildRouteTreeFromFileStructrure extends BaseAction
             }
         }
 
-        dd($pages[0]->matter('titles', 'ss'));
+        dd($pages);
     }
 }

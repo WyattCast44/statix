@@ -2,47 +2,59 @@
 
 namespace Statix\Builder;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Symfony\Component\Yaml\Yaml;
-use Spatie\YamlFrontMatter\Document;
 use Illuminate\Support\Facades\Blade;
 
 class Page
 {
-    private Document $document;
+    private $body;
+
+    private $matter;
 
     public function __construct(
         private string $path,
         private $contents,
     ) {
-        $this->document = $this->transformContentsToDocument();
+        $this->parseContents();
     }
 
-    public function matter(string $key = null, $default = null)
-    {
-        return $this->document->matter($key, $default);
-    }
-
-    public function transformContentsToDocument()
+    private function parseContents()
     {
         $pattern = '/^[\s\r\n]?---[\s\r\n]?$/sm';
 
         $parts = preg_split($pattern, PHP_EOL.ltrim($this->contents));
 
         if (count($parts) < 3) {
-            return new Document([], $this->contents);
+            $this->body = $this->contents;
+
+            return $this;
+        } 
+
+        $this->matter = Yaml::parse(Blade::render(trim($parts[1])));
+
+        $data = ($this->hasFrontMatter()) ? $this->matter : [];
+
+        $this->body = Blade::render(implode(PHP_EOL.'---'.PHP_EOL, array_slice($parts, 2)), [
+            'page' => $this,
+        ]);
+ 
+        return $this;
+    }
+
+    public function matter(string $key = null, $default = null)
+    {
+        if ($key) {
+            return Arr::get($this->matter, $key, $default);
         }
 
-        $matter = Yaml::parse(Blade::render(trim($parts[1])));
-
-        $body = implode(PHP_EOL.'---'.PHP_EOL, array_slice($parts, 2));
-
-        return new Document($matter, $body);
+        return $this->matter;
     }
 
     public function hasFrontMatter(): bool
     {
-        return $this->document->matter === [];
+        return $this->matter === null;
     }
 
     public function getPath(): string 
