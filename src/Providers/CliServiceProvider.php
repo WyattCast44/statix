@@ -13,11 +13,11 @@ use Statix\Commands\WatchCommand;
 use Statix\Commands\MakeComponent;
 use Statix\Commands\MakeEventsFile;
 use Illuminate\Console\Application;
-use Illuminate\Support\Facades\Artisan;
 use Statix\Commands\MakeHelpersFile;
 use Statix\Commands\BuildHttpCommand;
-use Illuminate\Support\ServiceProvider;
 use Statix\Commands\ClearCompiledViews;
+use Illuminate\Support\ServiceProvider;
+use Statix\Application as StatixApplication;
 use Statix\Events\DefaultCliCommandsRegistered;
 
 class CliServiceProvider extends ServiceProvider
@@ -66,7 +66,7 @@ class CliServiceProvider extends ServiceProvider
 
         $cli->app = $cli->getLaravel();
 
-        $this->app->make('statix')->cli = $cli;
+        $this->app->make(StatixApplication::class)->setCli($cli);
 
         event(new CliBound($cli));
         

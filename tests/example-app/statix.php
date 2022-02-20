@@ -8,6 +8,6 @@ require_once './../../vendor/autoload.php';
 
 $app = Application::new();
 
-app(BuildRouteTreeFromFileStructrure::class)->execute();
+// app(BuildRouteTreeFromFilConsoleApplicationeStructrure::class)->execute();
 
 $app->cli->run();

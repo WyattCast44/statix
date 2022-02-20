@@ -21,12 +21,15 @@ use Statix\Providers\ConfigServiceProvider;
 use Statix\Providers\EnvFileServiceProvider;
 use Statix\Events\DefaultProvidersRegistered;
 use NunoMaduro\Collision\Provider as Collision;
-use Statix\Providers\UserServiceProvidersProvider;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\Foundation\Application as FoundationApplication;
 
 class Application
 {
+    const VERSION = '0.0.1';
+
+    protected string $basePath;
+
     public Container $container;
 
     public Repository $paths;
@@ -39,15 +42,17 @@ class Application
 
     public Collection $providers;
 
-    public static function new(): static
+    public static function new(string $path = null): static
     {   
-        return new static;
+        return new static($path);
     }
 
-    public function __construct()
+    public function __construct(string $basePath = null)
     {
         (new Collision)->register();
-
+        
+        $this->basePath = ($basePath != null) ? $basePath : getcwd();
+        
         $this
             ->ensureContainerIsBinded()
             ->ensureDefaultServiceProvidersAreRegistered()
@@ -213,5 +218,17 @@ class Application
         event(new CliCommandsRegistered($this->cli));
 
         return $this;
+    }
+
+    public function setCli(ConsoleApplication $cli): self
+    {
+        $this->cli = $cli;
+
+        return $this;
+    }
+
+    public function basePath($path = ''): string
+    {
+        return $this->basePath.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
     }
 }

@@ -34,6 +34,14 @@ class Page
 
         $this->matter = Yaml::parse(Blade::render(trim($parts[1])));
 
+        if($this->matter != null) {
+            foreach ($this->matter as $key => $value) {
+                if(is_int($value)) {
+                    $this->matter[$key] = Carbon::parse($value);
+                }
+            }
+        }
+
         $data = ($this->hasFrontMatter()) ? $this->matter : [];
 
         $this->body = Blade::render(implode(PHP_EOL.'---'.PHP_EOL, array_slice($parts, 2)), [
