@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Facade;
 use Statix\Events\ProvidersRegistered;
 use Statix\Events\CliCommandsRegistered;
 use Statix\Providers\CliServiceProvider;
+use Statix\Providers\LogServiceProvider;
 use Statix\Events\DefaultProvidersBooted;
 use Statix\Providers\PathServiceProvider;
 use Statix\Providers\ViewServiceProvider;
@@ -25,17 +26,16 @@ use Statix\Events\DefaultProvidersRegistered;
 use NunoMaduro\Collision\Provider as Collision;
 use Statix\Contracts\Application as ApplicationContract;
 use Illuminate\Console\Application as ConsoleApplication;
-use Statix\Application as StatixApplication;
 
 class Application extends Container implements ApplicationContract
 {
     const VERSION = '0.0.1';
 
+    protected bool|null $isRunningInConsole = null;
+
     protected string $basePath;
 
     public Repository $paths;
-
-    public Repository $config;
 
     public ConsoleApplication $cli;
 
@@ -50,12 +50,14 @@ class Application extends Container implements ApplicationContract
 
     public function __construct(string $basePath = null)
     {
-        (new Collision)->register();
+        if($this->runningInConsole()) {
+            (new Collision)->register();
+        }
         
         $this->basePath = ($basePath != null) ? $basePath : getcwd();
         
         $this
-            ->ensureContainerIsBinded()
+            ->ensureContainerIsBoundAndConfigured()
             ->ensureDefaultServiceProvidersAreRegistered()
             ->ensureDefaultServiceProvidersAreBooted()
             ->ensureUserPathsAreRegistered()
@@ -163,7 +165,7 @@ class Application extends Container implements ApplicationContract
         return $this['env'] === 'production';
     }
 
-    private function ensureContainerIsBinded()
+    private function ensureContainerIsBoundAndConfigured()
     {
         self::setInstance($this);
         $this->instance('app', $this);
@@ -179,6 +181,7 @@ class Application extends Container implements ApplicationContract
         
         $this->defaultProviders = collect([
             EventServiceProvider::class,
+            LogServiceProvider::class,
             EnvFileServiceProvider::class,
             PathServiceProvider::class,
             ConfigServiceProvider::class,
@@ -211,15 +214,13 @@ class Application extends Container implements ApplicationContract
 
         event(new DefaultProvidersBooted($this->defaultProviders));
 
-        dd($this['config']);
-
         return $this;
     }
 
     private function ensureUserPathsAreRegistered()
     {   
-        if($this->config->has('site.paths')) {
-            collect($this->config->get('site.paths', []))->each(function($path, $key) {
+        if($this['config']->has('site.paths')) {
+            collect($this['config']->get('site.paths', []))->each(function($path, $key) {
                 $this->paths->set($key, $path, true);
             });
 
@@ -250,8 +251,8 @@ class Application extends Container implements ApplicationContract
 
         }
 
-        if($this->config->has('site.providers')) {
-            $this->providers = $this->providers->concat($this->config->get('site.providers', []));
+        if($this['config']->has('site.providers')) {
+            $this->providers = $this->providers->concat($this['config']->get('site.providers', []));
         }
 
         $this->providers = $this->providers->map(function($provider) {
@@ -292,11 +293,11 @@ class Application extends Container implements ApplicationContract
 
     private function ensureUserCommandsAreRegistered()
     {
-        if($this->config->has('site.commands')) {
-            $this->cli->resolveCommands($this->config->get('site.commands', []));
+        if($this['config']->has('site.commands')) {
+            $this->cli->resolveCommands($this['config']->get('site.commands', []));
         }
 
-        if($this->config->get('site.autodiscover_commands', false)) {
+        if($this['config']->get('site.autodiscover_commands', false)) {
 
             $path = $this->paths->get('app_path') . '/Console/Commands';
             
