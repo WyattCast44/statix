@@ -13,7 +13,7 @@ if (! function_exists('app')) {
      *
      * @param  string|null  $abstract
      * @param  array  $parameters
-     * @return mixed|\Illuminate\Contracts\Foundation\Application
+     * @return mixed|\Statix\Application
      */
     function app($abstract = null, array $parameters = []): mixed
     {
@@ -28,30 +28,18 @@ if (! function_exists('app')) {
 
 if (! function_exists('app_path')) {
 
-    /**
-     * Get the path to the application folder.
-     *
-     * @param  string  $path
-     * @return string
-     */
-    function app_path($path = ''): string
+    function app_path(string $path = ''): string
     {
-        return app()->make('paths')->get('app_path') . '/' . $path;
+        return app()->appPath($path);
     }
 
 }
 
 if (! function_exists('resource_path')) {
 
-    /**
-     * Get the path to the application folder.
-     *
-     * @param  string  $path
-     * @return string
-     */
-    function resource_path($path = ''): string
+    function resource_path(string $path = ''): string
     {
-        return app()->make('paths')->get('resource_path') . '/' . $path;
+        return app()->resourcePath($path);
     }
 
 }
@@ -75,30 +63,18 @@ if (! function_exists('event')) {
 
 if (! function_exists('base_path')) {
 
-    /**
-     * Get the path to the base of the install.
-     *
-     * @param  string  $path
-     * @return string
-     */
-    function base_path($path = ''): string
+    function base_path(string $path = ''): string
     {
-        return app()->make('paths')->get('cwd') . '/' .  $path;
+        return app()->basePath($path);
     }
 
 }
 
 if (! function_exists('public_path')) {
 
-    /**
-     * Get the path to the application folder.
-     *
-     * @param  string  $path
-     * @return string
-     */
-    function public_path($path = ''): string
+    function public_path(string $path = ''): string
     {
-        return app()->make('paths')->get('public') . '/' . $path;
+        return app()->publicPath($path);
     }
 
 }

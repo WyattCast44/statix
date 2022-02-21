@@ -4,20 +4,6 @@ Statix is a powerful Laravel-esque static site generator.
 
 Forged by skilled Laravel Artisans with the power of PHP, wielding the Blade, to Illuminate the generation of static sites.
 
-# Features
-
-- built on Laravel components
-    - config
-    - container
-    - cli
-    - view
-    - more
-- register custom paths
-- full artisan based cli application
-- blade templates with blade components support
-- advanced markdown compilation
-- more
-
 # Inspirations
 
 - https://github.com/aschmelyun/cleaver/
