@@ -42,6 +42,7 @@ class PathServiceProvider extends ServiceProvider
                 'content' => $cwd . '\resources\content',
                 'database' => $cwd . '\database',
                 'lang_path' => $cwd . '\lang',
+                'log_path' => $cwd . '\storage\logs\statix.log',
                 'public' => $cwd . '\public',
                 'storage' => $cwd . '\storage',
                 'routes' => $cwd . '\routes',
