@@ -124,10 +124,10 @@ class Application extends Container implements ApplicationContract
     {   
         if($this['config']->has('site.paths')) {
             collect($this['config']->get('site.paths', []))->each(function($path, $key) {
-                $this->paths->set($key, $path, true);
+                $this['paths']->set($key, $path, true);
             });
 
-            $this['events']->dispatch(new PathsRegistered($this->paths));
+            $this['events']->dispatch(new PathsRegistered($this['paths']));
         }
 
         return $this;
@@ -135,7 +135,7 @@ class Application extends Container implements ApplicationContract
 
     private function ensureUserServiceProvidersAreRegistered()
     {
-        $path = $this->paths->get('app_path') . '/Providers';
+        $path = $this['paths']->get('app_path') . '/Providers';
 
         if(!is_dir($path)) {
 
@@ -202,7 +202,7 @@ class Application extends Container implements ApplicationContract
 
         if($this['config']->get('site.autodiscover_commands', false)) {
 
-            $path = $this->paths->get('app_path') . '/Console/Commands';
+            $path = $this['paths']->get('app_path') . '/Console/Commands';
             
             if(file_exists($path)) {            
 
