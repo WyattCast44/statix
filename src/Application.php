@@ -4,6 +4,7 @@ namespace Statix;
 
 use Illuminate\Support\Env;
 use Illuminate\Support\Str;
+use Statix\Events\LocaleUpdated;
 use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
 use Statix\Events\PathsRegistered;
@@ -100,7 +101,7 @@ class Application extends Container implements ApplicationContract
             return $obj;
         });
 
-        event(new DefaultProvidersRegistered($this->defaultProviders));
+        $this['events']->dispatch(new DefaultProvidersRegistered($this->defaultProviders));
 
         return $this;
     }
@@ -113,7 +114,8 @@ class Application extends Container implements ApplicationContract
             }
         });
 
-        event(new DefaultProvidersBooted($this->defaultProviders));        
+
+        $this['events']->dispatch(new DefaultProvidersBooted($this->defaultProviders));        
 
         return $this;
     }
@@ -125,7 +127,7 @@ class Application extends Container implements ApplicationContract
                 $this->paths->set($key, $path, true);
             });
 
-            event(new PathsRegistered($this->paths));
+            $this['events']->dispatch(new PathsRegistered($this->paths));
         }
 
         return $this;
@@ -166,7 +168,7 @@ class Application extends Container implements ApplicationContract
             return $obj;
         });
 
-        event(new ProvidersRegistered($this->providers));
+        $this['events']->dispatch(new ProvidersRegistered($this->providers));
 
         $this->providers = $this->providers->map(function($provider) {
             if(method_exists($provider, 'boot')) {
@@ -176,18 +178,18 @@ class Application extends Container implements ApplicationContract
             return $provider;
         });
 
-        event(new ProvidersBooted($this->providers));
+        $this['events']->dispatch(new ProvidersBooted($this->providers));
 
         return $this;
     }
 
     private function ensureUserHelpersFileIsLoaded()
     {
-        // if(file_exists($path = $this->appPath('helpers.php'))) {
-        //     require_once $path;
+        if(file_exists($path = $this->appPath('helpers.php'))) {
+            require_once $path;
 
-        //     event(new HelpersFileLoaded);
-        // }
+            $this['events']->dispatch(new HelpersFileLoaded);
+        }
         
         return $this;
     }
@@ -217,7 +219,7 @@ class Application extends Container implements ApplicationContract
             }
         }
 
-        event(new CliCommandsRegistered($this->cli));
+        $this['events']->dispatch(new CliCommandsRegistered($this->cli));
 
         return $this;
     }
@@ -313,7 +315,7 @@ class Application extends Container implements ApplicationContract
     {
         $this['config']->set('site.locale', $locale);
 
-        // $this['events']->dispatch(new LocaleUpdated($locale));
+        $this['events']->dispatch(new LocaleUpdated($locale));
 
         return $this;
     }
