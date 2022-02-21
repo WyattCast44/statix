@@ -35,6 +35,6 @@ class RouteServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->make('statix')->routes = $this->app->make(RouteRegistrar::class);
+        $this->app->routes = $this->app->make(RouteRegistrar::class);
     }
 }

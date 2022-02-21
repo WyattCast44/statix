@@ -48,7 +48,9 @@ class PathServiceProvider extends ServiceProvider
             ]);
         });
 
-        $base = $this->app->make('statix')->basePath();
+        $this->app->paths = $paths;
+
+        $base = $this->app->basePath();
 
         $this->app->bind('path.base', $base);
         $this->app->bind('path', $base . DIRECTORY_SEPARATOR . 'app');
@@ -59,8 +61,6 @@ class PathServiceProvider extends ServiceProvider
         $this->app->bind('path.resources', $base . DIRECTORY_SEPARATOR . 'resources');
         $this->app->bind('path.bootstrap', $base . DIRECTORY_SEPARATOR . 'storage/framework/bootstrap');
         $this->app->bind('path.lang', $base . DIRECTORY_SEPARATOR . 'lang');
-
-        $this->app->make('statix')->paths = $paths;
 
         event(new PathsBound($paths));
 

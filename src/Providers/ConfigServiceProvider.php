@@ -28,7 +28,7 @@ class ConfigServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->make('statix')->config = $this->app->make('config');
+        $this->app->config = $this->app->make('config');
         
         event(new ConfigBound($this->app->make('config')));
 

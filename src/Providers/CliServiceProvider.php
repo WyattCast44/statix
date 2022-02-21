@@ -66,12 +66,13 @@ class CliServiceProvider extends ServiceProvider
 
         $cli->app = $cli->getLaravel();
 
-        $this->app->make(StatixApplication::class)->setCli($cli);
+        $this->app->setCli($cli);
 
-        event(new CliBound($cli));
-        
+        event(new CliBound($cli));        
+
         $cli->resolveCommands($this->defaultCommands);
 
         event(new DefaultCliCommandsRegistered($cli));
+
     }
 }

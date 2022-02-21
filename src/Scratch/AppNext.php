@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Foundation\Application;
+use Statix\Exceptions\NotImplementedException;
 
 class AppNext extends Container implements Application
 {
@@ -247,29 +248,21 @@ class AppNext extends Container implements Application
     /**
      * Get an instance of the maintenance mode manager implementation.
      *
-     * @return \Illuminate\Contracts\Foundation\MaintenanceMode
+     * @return \Statix\Exceptions\NotImplementedException
      */
     public function maintenanceMode()
     {
-        return;
+        new NotImplementedException('This feature is not implemented in statix.');
     }
 
-    /**
-     * Determine if the application is currently down for maintenance.
-     */
     public function isDownForMaintenance(): bool
     {
         return false;
     }
 
-    /**
-     * Determine if the application has booted.
-     *
-     * @return bool
-     */
-    public function isBooted()
+    public function isBooted(): bool
     {
-        return $this->booted;
+        return (bool) $this->booted;
     }
 
     /**
@@ -284,7 +277,7 @@ class AppNext extends Container implements Application
                             return str_starts_with($provider, 'Illuminate\\');
                         });
 
-        // $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
+        $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
         // (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
         //             ->load($providers->collapse()->toArray());

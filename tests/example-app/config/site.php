@@ -1,8 +1,5 @@
 <?php
 
-use Hammerstone\Sidecar\Commands\Install;
-use Hammerstone\Sidecar\Providers\SidecarServiceProvider;
-
 return [
     
     /*
@@ -80,7 +77,9 @@ return [
     |
     | The commands listed here will be automatically registred with the
     | application CLI. Feel free to add your own commands to this array  
-    | to grant expanded functionality to your applications.
+    | to grant expanded functionality to your applications. Any command
+    | classes in the app/console/commands directory will be autodiscovered
+    | if 'autodiscover_commands` is true
     |
     */
 
@@ -110,7 +109,11 @@ return [
     | Application Providers
     |--------------------------------------------------------------------------
     |
-    | The following values are simply for use in unit tests
+    | The providers listed here will be automatically registered with the
+    | application. Feel free to add your own providers to this array  
+    | to grant expanded functionality to your applications. Any provider
+    | classes in the app/providers directory will be autodiscovered
+    | if 'autodiscover_providers` is true
     |
     */
 

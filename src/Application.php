@@ -2,11 +2,13 @@
 
 namespace Statix;
 
-use Statix\Support\Container;
+use Illuminate\Support\Env;
+use Illuminate\Support\Str;
 use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
 use Statix\Events\PathsRegistered;
 use Statix\Events\ProvidersBooted;
+use Illuminate\Container\Container;
 use Statix\Events\HelpersFileLoaded;
 use Illuminate\Support\Facades\Facade;
 use Statix\Events\ProvidersRegistered;
@@ -21,16 +23,15 @@ use Statix\Providers\ConfigServiceProvider;
 use Statix\Providers\EnvFileServiceProvider;
 use Statix\Events\DefaultProvidersRegistered;
 use NunoMaduro\Collision\Provider as Collision;
+use Statix\Contracts\Application as ApplicationContract;
 use Illuminate\Console\Application as ConsoleApplication;
-use Illuminate\Contracts\Foundation\Application as FoundationApplication;
+use Statix\Application as StatixApplication;
 
-class Application
+class Application extends Container implements ApplicationContract
 {
     const VERSION = '0.0.1';
 
     protected string $basePath;
-
-    public Container $container;
 
     public Repository $paths;
 
@@ -63,22 +64,119 @@ class Application
             ->ensureUserCommandsAreRegistered();
     }
 
+    public function version(): string
+    {
+        return self::VERSION;
+    }
+
+    public function appPath(string $path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'app'($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function basePath($path = ''): string
+    {
+        return $this->basePath.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function configPath($path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'config'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function databasePath($path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'database'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function langPath($path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'public'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function publicPath($path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'public'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function resourcePath($path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'resources'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function storagePath(string $path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'storage'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+    
+    public function viewPath(string $path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'resources/views'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function environment(string|array ...$environments): string|bool
+    {
+        if (count($environments) > 0) {
+            $patterns = is_array($environments[0]) ? $environments[0] : $environments;
+
+            return Str::is($patterns, $this['env']);
+        }
+
+        return $this['env'];
+    }
+
+    public function runningInConsole(): bool
+    {
+        if ($this->isRunningInConsole === null) {
+            $this->isRunningInConsole = Env::get('APP_RUNNING_IN_CONSOLE') ?? (\PHP_SAPI === 'cli' || \PHP_SAPI === 'phpdbg');
+        }
+
+        return $this->isRunningInConsole;
+    }
+
+    public function runningUnitTests(): bool
+    {
+        return $this->bound('env') && $this['env'] === 'testing';
+    }
+
+    public function getLocale(): string
+    {
+        return $this['config']->get('site.locale');
+    }
+
+    public function setLocale($locale): self
+    {
+        $this['config']->set('site.locale', $locale);
+
+        // $this['events']->dispatch(new LocaleUpdated($locale));
+
+        return $this;
+    }
+
+    public function isLocal(): bool
+    {
+        return $this['env'] === 'local';
+    }
+
+    public function isProduction(): bool
+    {
+        return $this['env'] === 'production';
+    }
+
     private function ensureContainerIsBinded()
     {
-        $this->container = tap(new Container, function(Container $container) {
-            $container->setInstance($container);
-            $container->instance(Application::class, $this);
-            $container->alias(Application::class, 'statix');
-            $container->instance(FoundationApplication::class, $container);
-        });
-
-        Facade::setFacadeApplication($this->container);
-
+        self::setInstance($this);
+        $this->instance('app', $this);
+        $this->instance(Container::class, $this);
+        $this->instance(ApplicationContract::class, $this);
+        Facade::setFacadeApplication($this);
+        
         return $this;
     }
 
     private function ensureDefaultServiceProvidersAreRegistered()
     {
+        
         $this->defaultProviders = collect([
             EventServiceProvider::class,
             EnvFileServiceProvider::class,
@@ -89,7 +187,7 @@ class Application
             RouteServiceProvider::class
         ])->map(function($provider) {
             
-            $obj = new $provider($this->container);
+            $obj = new $provider($this);
 
             if(method_exists($obj, 'register')) {
                 $obj->register();
@@ -155,7 +253,7 @@ class Application
         }
 
         $this->providers = $this->providers->map(function($provider) {
-            $obj = new $provider($this->container);
+            $obj = new $provider($this);
 
             if(method_exists($obj, 'register')) {
                 $obj->register();
@@ -225,10 +323,5 @@ class Application
         $this->cli = $cli;
 
         return $this;
-    }
-
-    public function basePath($path = ''): string
-    {
-        return $this->basePath.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
     }
 }

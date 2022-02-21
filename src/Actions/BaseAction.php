@@ -2,7 +2,7 @@
 
 namespace Statix\Actions;
 
-use Statix\Support\Container;
+use Illuminate\Container\Container;
 
 abstract class BaseAction
 {

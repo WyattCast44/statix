@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
 use Statix\Application;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -14,5 +14,10 @@ abstract class TestCase extends BaseTestCase
         chdir(__DIR__ . '/example-app');
 
         $this->app = Application::new();
+    }
+
+    public function useExampleApp(): Application
+    {
+        return Application::new(__DIR__ . '/example-app');
     }
 }

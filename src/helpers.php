@@ -2,14 +2,14 @@
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Statix\Support\Container;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Statix\Application;
 
 if (! function_exists('app')) {
 
     /**
-     * Get the available statix/illuminate container instance.
+     * Get the available container instance.
      *
      * @param  string|null  $abstract
      * @param  array  $parameters
@@ -18,10 +18,10 @@ if (! function_exists('app')) {
     function app($abstract = null, array $parameters = []): mixed
     {
         if (is_null($abstract)) {
-            return Container::getInstance();
+            return Application::getInstance();
         }
 
-        return Container::getInstance()->make($abstract, $parameters);
+        return Application::getInstance()->make($abstract, $parameters);
     }
 
 }
