@@ -135,13 +135,9 @@ class Application extends Container implements ApplicationContract
 
     private function ensureUserServiceProvidersAreRegistered()
     {
-        $path = $this['paths']->get('app_path') . '/Providers';
+        $path = $this->appPath('Providers');
 
-        if(!is_dir($path)) {
-
-            $this->providers = collect();
-
-        } else {
+        if(is_dir($path) && $this['config']->get('site.autodiscover_providers')) {
 
             $this->providers = collect(scandir($path))
                 ->reject(function ($file) {
@@ -150,7 +146,11 @@ class Application extends Container implements ApplicationContract
                     return (pathinfo($file)['extension'] != 'php');
                 })->map(function($file) {
                     return "App\\Providers\\" . basename($file, '.php');
-                });
+                });            
+
+        } else {
+
+            $this->providers = collect();
 
         }
 
@@ -186,7 +186,7 @@ class Application extends Container implements ApplicationContract
     private function ensureUserHelpersFileIsLoaded()
     {
         if(file_exists($path = $this->appPath('helpers.php'))) {
-            require_once $path;
+            include $path;
 
             $this['events']->dispatch(new HelpersFileLoaded);
         }
@@ -238,7 +238,7 @@ class Application extends Container implements ApplicationContract
 
     public function appPath(string $path = ''): string
     {
-        return $this->basePath.DIRECTORY_SEPARATOR.'app'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+        return $this['paths']->get('app_path').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
     }
 
     public function basePath($path = ''): string

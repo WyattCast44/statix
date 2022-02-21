@@ -57,16 +57,22 @@ class WatchCommand extends Command
         }
 
         Watch::paths(
-            path('views'),
-            path('public'),
+            app_path(),
+            config_path(),
+            public_path(),
+            resource_path('views'),
             path('routes'),
-            path('config'),
         )->onAnyChange(function(string $type, string $path) {  
 
-            if(Str::startsWith($path, Str::replace('/', '\\', path('config')))) {
+            if(Str::startsWith($path, Str::replace('/', '\\', config_path()))) {
                 $this->info(PHP_EOL . 'Reloading config files');
 
-                app()->make(LoadConfigFiles::class)->execute();
+                app(LoadConfigFiles::class)->execute();
+            }
+
+            if(Str::endsWith($path, 'helpers.php')) {
+                $this->error(PHP_EOL . 'Restart watcher to enable changes in helpers.php');
+                return;
             }
             
             require path('routes') . '/web.php';
