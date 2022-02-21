@@ -26,7 +26,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(file_exists($path = getcwd() . '/routes/events.php')) {
+        if(file_exists($path = $this->app->basePath('routes/events.php'))) {
             require_once($path);
         }
     }

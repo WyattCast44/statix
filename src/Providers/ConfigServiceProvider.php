@@ -27,9 +27,7 @@ class ConfigServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
-    {
-        $this->app->config = $this->app->make('config');
-        
+    {        
         event(new ConfigBound($this->app->make('config')));
 
         app()->make(LoadConfigFiles::class)->execute();

@@ -66,105 +66,6 @@ class Application extends Container implements ApplicationContract
             ->ensureUserCommandsAreRegistered();
     }
 
-    public function version(): string
-    {
-        return self::VERSION;
-    }
-
-    public function appPath(string $path = ''): string
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'app'($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-
-    public function basePath($path = ''): string
-    {
-        return $this->basePath.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-
-    public function configPath($path = ''): string
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'config'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-
-    public function databasePath($path = ''): string
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'database'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-
-    public function langPath($path = ''): string
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'public'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-
-    public function publicPath($path = ''): string
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'public'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-
-    public function resourcePath($path = ''): string
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'resources'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-
-    public function storagePath(string $path = ''): string
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'storage'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-    
-    public function viewPath(string $path = ''): string
-    {
-        return $this->basePath.DIRECTORY_SEPARATOR.'resources/views'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
-    }
-
-    public function environment(string|array ...$environments): string|bool
-    {
-        if (count($environments) > 0) {
-            $patterns = is_array($environments[0]) ? $environments[0] : $environments;
-
-            return Str::is($patterns, $this['env']);
-        }
-
-        return $this['env'];
-    }
-
-    public function runningInConsole(): bool
-    {
-        if ($this->isRunningInConsole === null) {
-            $this->isRunningInConsole = Env::get('APP_RUNNING_IN_CONSOLE') ?? (\PHP_SAPI === 'cli' || \PHP_SAPI === 'phpdbg');
-        }
-
-        return $this->isRunningInConsole;
-    }
-
-    public function runningUnitTests(): bool
-    {
-        return $this->bound('env') && $this['env'] === 'testing';
-    }
-
-    public function getLocale(): string
-    {
-        return $this['config']->get('site.locale');
-    }
-
-    public function setLocale($locale): self
-    {
-        $this['config']->set('site.locale', $locale);
-
-        // $this['events']->dispatch(new LocaleUpdated($locale));
-
-        return $this;
-    }
-
-    public function isLocal(): bool
-    {
-        return $this['env'] === 'local';
-    }
-
-    public function isProduction(): bool
-    {
-        return $this['env'] === 'production';
-    }
-
     private function ensureContainerIsBoundAndConfigured()
     {
         self::setInstance($this);
@@ -326,5 +227,104 @@ class Application extends Container implements ApplicationContract
         $this->cli = $cli;
 
         return $this;
+    }
+
+    public function version(): string
+    {
+        return self::VERSION;
+    }
+
+    public function appPath(string $path = ''): string
+    {
+        return $this->basePath.DIRECTORY_SEPARATOR.'app'($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function basePath($path = ''): string
+    {
+        return $this->basePath.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function configPath($path = ''): string
+    {
+        return $this['paths']->get('config').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function databasePath($path = ''): string
+    {
+        return $this['paths']->get('database').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function langPath($path = ''): string
+    {
+        return $this['paths']->get('lang_path').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function publicPath($path = ''): string
+    {
+        return $this['paths']->get('public').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function resourcePath($path = ''): string
+    {
+        return $this['paths']->get('resource_path').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function storagePath(string $path = ''): string
+    {
+        return $this['paths']->get('storage').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+    
+    public function viewPath(string $path = ''): string
+    {
+        return $this['paths']->get('views').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function environment(string|array ...$environments): string|bool
+    {
+        if (count($environments) > 0) {
+            $patterns = is_array($environments[0]) ? $environments[0] : $environments;
+
+            return Str::is($patterns, $this['env']);
+        }
+
+        return $this['env'];
+    }
+
+    public function runningInConsole(): bool
+    {
+        if ($this->isRunningInConsole === null) {
+            $this->isRunningInConsole = Env::get('APP_RUNNING_IN_CONSOLE') ?? (\PHP_SAPI === 'cli' || \PHP_SAPI === 'phpdbg');
+        }
+
+        return $this->isRunningInConsole;
+    }
+
+    public function runningUnitTests(): bool
+    {
+        return $this->bound('env') && $this['env'] === 'testing';
+    }
+
+    public function getLocale(): string
+    {
+        return $this['config']->get('site.locale');
+    }
+
+    public function setLocale($locale): self
+    {
+        $this['config']->set('site.locale', $locale);
+
+        // $this['events']->dispatch(new LocaleUpdated($locale));
+
+        return $this;
+    }
+
+    public function isLocal(): bool
+    {
+        return $this['env'] === 'local';
+    }
+
+    public function isProduction(): bool
+    {
+        return $this['env'] === 'production';
     }
 }
