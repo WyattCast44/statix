@@ -211,6 +211,8 @@ class Application extends Container implements ApplicationContract
 
         event(new DefaultProvidersBooted($this->defaultProviders));
 
+        dd($this['config']);
+
         return $this;
     }
 
