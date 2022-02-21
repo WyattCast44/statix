@@ -89,4 +89,9 @@ class Page
     {
         return ($time = filemtime($this->getPath())) ? Carbon::parse($time) : Carbon::now();
     }
+
+    public function shouldPublish(callable $cb): bool
+    {
+        return $cb($this);
+    }
 }

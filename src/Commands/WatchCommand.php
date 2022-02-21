@@ -74,6 +74,11 @@ class WatchCommand extends Command
                 $this->error(PHP_EOL . 'Restart watcher to enable changes in helpers.php');
                 return;
             }
+
+            if(Str::endsWith($path, 'events.php')) {
+                $this->error(PHP_EOL . 'Restart watcher to enable changes in events.php');
+                return;
+            }
             
             require path('routes') . '/web.php';
 
