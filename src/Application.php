@@ -113,7 +113,7 @@ class Application extends Container implements ApplicationContract
             }
         });
 
-        event(new DefaultProvidersBooted($this->defaultProviders));
+        event(new DefaultProvidersBooted($this->defaultProviders));        
 
         return $this;
     }
@@ -183,11 +183,11 @@ class Application extends Container implements ApplicationContract
 
     private function ensureUserHelpersFileIsLoaded()
     {
-        if(file_exists($path = $this->paths->get('app_path') . '/helpers.php')) {
-            require_once $path;
+        // if(file_exists($path = $this->appPath('helpers.php'))) {
+        //     require_once $path;
 
-            event(new HelpersFileLoaded);
-        }
+        //     event(new HelpersFileLoaded);
+        // }
         
         return $this;
     }
@@ -236,7 +236,7 @@ class Application extends Container implements ApplicationContract
 
     public function appPath(string $path = ''): string
     {
-        return $this->basePath.DIRECTORY_SEPARATOR.'app'($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+        return $this->basePath.DIRECTORY_SEPARATOR.'app'.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
     }
 
     public function basePath($path = ''): string

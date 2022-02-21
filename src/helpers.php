@@ -1,10 +1,10 @@
 <?php
 
+use Statix\Application;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Contracts\View\Factory as ViewFactory;
-use Statix\Application;
 
 if (! function_exists('app')) {
 
