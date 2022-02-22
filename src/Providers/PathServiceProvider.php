@@ -51,23 +51,6 @@ class PathServiceProvider extends ServiceProvider
             ]);
         });
 
-        $this->app->paths = $paths;
-
-        event(new PathsBound($paths));
-
-        $this->ensureRequiredPathsExist($paths);
-    }
-
-    private function ensureRequiredPathsExist($paths)
-    {
-        // collect(['routes', 'views', 'public'])->each(function($path) use ($paths) {
-        //     if(!is_dir($paths->get($path))) {
-        //         if(!file_exists($paths->get($path))) {
-        //             throw new Exception("The '$path' path must be defined and exist. Currently set to: " . $paths->get($path));
-        //         }
-        //     }
-        // });
-
-        return $this;
+        $this->app['events']->dispatch(new PathsBound($paths));
     }
 }

@@ -36,8 +36,6 @@ class Application extends Container implements ApplicationContract
 
     protected string $basePath;
 
-    public Repository $paths;
-
     public ConsoleApplication $cli;
 
     public Collection $defaultProviders;
