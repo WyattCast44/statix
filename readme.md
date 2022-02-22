@@ -143,9 +143,9 @@ To run the application test suite, run the following command.
 ```
 
 "repositories": [
-        {
-            "type": "path",
-            "url": "./../statix",
-            "options": {}
-        }
-    ]
+    {
+        "type": "path",
+        "url": "./../statix",
+        "options": {}
+    }
+]
