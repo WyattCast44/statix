@@ -141,3 +141,11 @@ To run the application test suite, run the following command.
 ```bash
 ./vendor/bin/phpunit
 ```
+
+"repositories": [
+        {
+            "type": "path",
+            "url": "./../statix",
+            "options": {}
+        }
+    ]
