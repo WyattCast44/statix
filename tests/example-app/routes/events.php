@@ -1,10 +1,8 @@
 <?php
 
-use Statix\Events\PathsRegistered;
-use Statix\Events\ProvidersBooted;
+use Statix\Events\EnvFileLoaded;
 use Illuminate\Support\Facades\Event;
-use Statix\Events\PathsBound;
 
-Event::listen(function(PathsBound $event) {
+Event::listen(function(EnvFileLoaded $event) {
     // dd($event);
 });

@@ -184,7 +184,7 @@ class Application extends Container implements ApplicationContract
     private function ensureUserHelpersFileIsLoaded()
     {
         if(file_exists($path = $this->appPath('helpers.php'))) {
-            include $path;
+            include_once $path;
 
             $this['events']->dispatch(new HelpersFileLoaded);
         }
