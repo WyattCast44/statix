@@ -26,7 +26,8 @@
         "symfony/process": "^6.0",
         "vlucas/phpdotenv": "^5.4",
         "symfony/yaml": "^6.0",
-        "illuminate/log": "^9.1"
+        "illuminate/log": "^9.1",
+        "spatie/async": "^1.5"
     },
     "require-dev": {
         "brianium/paratest": "^6.4",

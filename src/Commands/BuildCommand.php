@@ -2,6 +2,8 @@
 
 namespace Statix\Commands;
 
+use Throwable;
+use Spatie\Async\Pool;
 use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Support\Facades\File;
@@ -32,6 +34,24 @@ class BuildCommand extends Command
         $this->copyPublicAssetsDirectory();
         
         require_once path('routes') . '/web.php';
+
+        $routes = app()->make(RouteRegistrar::class)->routes;
+
+        $pool = Pool::create();
+
+        $pool->concurrency(10);
+
+        foreach ($routes as $route) {
+            $pool->add(function () use ($route) {
+                (new BuildRouteFromView(null, $route))->execute($this->argument('name'));
+            })->then(function ($output) {
+                // Handle success
+            })->catch(function (Throwable $exception) {
+                // Handle exception
+            });
+        }
+
+        $pool->wait();
 
         collect(app()->make(RouteRegistrar::class)->routes)->each(function($route, $uri) {
             

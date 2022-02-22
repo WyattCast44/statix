@@ -11,20 +11,20 @@ class BuildRouteFromView
 
     protected $route;
 
-    public function __construct(Command $command, $route)
+    public function __construct(Command $command = null, $route)
     {
         $this->cli = $command;
 
         $this->route = $route;    
     }
 
-    public function execute()
+    public function execute($name = null)
     {
         $start = microtime(true);
 
         // ensure the view actually exists
         if(!file_exists($this->route['view_path'])) {
-            $this->cli->error('View does not exist: ' . $this->route['view'] . PHP_EOL);
+            // $this->cli->error('View does not exist: ' . $this->route['view'] . PHP_EOL);
             return true;
         }
 
@@ -34,7 +34,7 @@ class BuildRouteFromView
 
             // write the static page to file
             File::put(
-                path_build('builds', $this->cli->argument('name'), 'index.html'), 
+                path_build('builds', $name, 'index.html'), 
                 view($this->route['view'], $this->route['data'])->render()
             );
             
@@ -42,19 +42,19 @@ class BuildRouteFromView
             
             // ensure the directory exists
             File::ensureDirectoryExists(
-                path_build('builds', $this->cli->argument('name'), $this->route['uri']), 
+                path_build('builds', $name, $this->route['uri']), 
                 0777, 
                 true
             );
             
             // write the static page to file
             File::put(
-                path_build('builds', $this->cli->argument('name'), $this->route['uri'], 'index.html'), 
+                path_build('builds', $name, $this->route['uri'], 'index.html'), 
                 view($this->route['view'], $this->route['data'])->render()
             );
 
         }
 
-        $this->cli->line('Building URI: ' . $this->route['uri'] . ' (' . round(microtime(true) - $start, 4) . 's)');
+        // $this->cli->line('Building URI: ' . $this->route['uri'] . ' (' . round(microtime(true) - $start, 4) . 's)');
     }
 }

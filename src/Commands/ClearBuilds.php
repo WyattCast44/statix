@@ -13,8 +13,10 @@ class ClearBuilds extends Command
 
     public function handle()
     {
+        $start = microtime(true);
+
         File::deleteDirectory(path('builds', true));
 
-        $this->info(PHP_EOL . 'Cleared builds successfully');
+        $this->info(PHP_EOL . 'Cleared builds successfully (' . round(microtime(true) - $start, 4) . 's)');
     }
 }

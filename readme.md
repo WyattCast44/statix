@@ -17,6 +17,8 @@ Forged by skilled Laravel Artisans with the power of PHP, wielding the Blade, to
 - https://github.com/spatie/file-system-watcher
 - https://github.com/laravel/framework/blob/8.x/src/Illuminate/Foundation/helpers.php
 - https://github.com/illuminate/support/blob/master/helpers.php
+- https://css-tricks.com/comparing-static-site-generator-build-times/
+- https://ssg-build-performance-tests.netlify.app/
 
 # Routing
 
