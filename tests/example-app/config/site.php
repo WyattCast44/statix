@@ -96,7 +96,7 @@ return [
     |
     | The paths listed here will be automatically registred with the 
     | application path manager. Feel free to add your paths to this array to 
-    | easily access them with the path() helper function.
+    | easily access them with the app('paths') helper function.
     |
     */
 

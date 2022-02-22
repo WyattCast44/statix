@@ -34,7 +34,7 @@ class BuildRouteFromView
 
             // write the static page to file
             File::put(
-                path_build('builds', $name, 'index.html'), 
+                base_path("builds/{$name}/index.html"),
                 view($this->route['view'], $this->route['data'])->render()
             );
             
@@ -42,14 +42,14 @@ class BuildRouteFromView
             
             // ensure the directory exists
             File::ensureDirectoryExists(
-                path_build('builds', $name, $this->route['uri']), 
+                base_path("builds/{$name}/{$this->route['uri']}"),
                 0777, 
                 true
             );
             
             // write the static page to file
             File::put(
-                path_build('builds', $name, $this->route['uri'], 'index.html'), 
+                base_path("builds/{$name}/{$this->route['uri']}/index.html"),
                 view($this->route['view'], $this->route['data'])->render()
             );
 

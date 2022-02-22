@@ -13,14 +13,14 @@ class MakeEventsFile extends Command
 
     public function isHidden(): bool
     {
-        return file_exists(path('routes') . '/events.php');
+        return file_exists(base_path('routes/events.php'));
     }
 
     public function handle()
     {
-        File::ensureDirectoryExists(path('routes'));
+        File::ensureDirectoryExists(base_path('routes'));
 
-        $path = path('routes') . '/events.php';
+        $path = base_path('routes/events.php');
 
         if(file_exists($path)) {
             $this->error(PHP_EOL . 'File already exists, delete file and try again');

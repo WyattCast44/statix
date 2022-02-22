@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Statix\Actions\BuildRouteFromView;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\PhpExecutableFinder;
 

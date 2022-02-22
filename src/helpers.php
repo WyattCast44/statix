@@ -26,59 +26,6 @@ if (! function_exists('app')) {
 
 }
 
-if (! function_exists('app_path')) {
-
-    function app_path(string $path = ''): string
-    {
-        return app()->appPath($path);
-    }
-
-}
-
-if (! function_exists('resource_path')) {
-
-    function resource_path(string $path = ''): string
-    {
-        return app()->resourcePath($path);
-    }
-
-}
-
-if (! function_exists('event')) {
-
-    /**
-     * Dispatch an event and call the listeners.
-     *
-     * @param  string|object  $event
-     * @param  mixed  $payload
-     * @param  bool  $halt
-     * @return array|null
-     */
-    function event(...$args)
-    {
-        return app('events')->dispatch(...$args);
-    }
-    
-}
-
-if (! function_exists('base_path')) {
-
-    function base_path(string $path = ''): string
-    {
-        return app()->basePath($path);
-    }
-
-}
-
-if (! function_exists('public_path')) {
-
-    function public_path(string $path = ''): string
-    {
-        return app()->publicPath($path);
-    }
-
-}
-
 if(!function_exists('config')) {
 
     /**
@@ -106,19 +53,21 @@ if(!function_exists('config')) {
 
 }
 
-if (! function_exists('config_path')) {
+if (! function_exists('event')) {
 
     /**
-     * Get the configuration path.
+     * Dispatch an event and call the listeners.
      *
-     * @param  string  $path
-     * @return string
+     * @param  string|object  $event
+     * @param  mixed  $payload
+     * @param  bool  $halt
+     * @return array|null
      */
-    function config_path($path = ''): string
+    function event(...$args)
     {
-        return app()->make('paths')->get('config') . '/' . $path;
+        return app('events')->dispatch(...$args);
     }
-
+    
 }
 
 if(!function_exists('view')) {
@@ -140,42 +89,6 @@ if(!function_exists('view')) {
         }
 
         return $factory->make($view, $data, $mergeData);
-    }
-
-}
-
-if(!function_exists('path')) {
-
-    function path($key = null, $default = null): mixed
-    {
-        if($key != null) {
-            return app()->make('paths')->get($key, $default);
-        }
-
-        return app()->make('paths');
-    }
-
-}
-
-if(!function_exists('path_join')) {
-
-    function path_join($key, ...$appends): mixed
-    {
-        return app()->make('paths')->get($key) . implode('', $appends);
-    }
-
-    function path_build($key, ...$appends): mixed
-    {
-        return rtrim(app()->make('paths')->get($key), '/') . '/' . implode('/', $appends);
-    }
-
-}
-
-if(!function_exists('path_build')) {
-
-    function path_build($key, ...$appends): mixed
-    {
-        return rtrim(app()->make('paths')->get($key), '/') . '/' . implode('/', $appends);
     }
 
 }
@@ -214,6 +127,82 @@ if(!function_exists('asset')) {
     function asset($path)
     {
         return config('site.url', 'http://localhost') . ':' . config('site.port', '8080') . '/' . $path;
+    }
+
+}
+
+/**
+ * Paths
+ */
+if (! function_exists('app_path')) {
+
+    function app_path(string $path = ''): string
+    {
+        return app()->appPath($path);
+    }
+
+}
+
+if (! function_exists('base_path')) {
+
+    function base_path(string $path = ''): string
+    {
+        return app()->basePath($path);
+    }
+
+}
+
+if (! function_exists('config_path')) {
+
+    /**
+     * Get the configuration path.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function config_path($path = ''): string
+    {
+        return app()->make('paths')->get('config') . '/' . $path;
+    }
+
+}
+
+if (! function_exists('public_path')) {
+
+    function public_path(string $path = ''): string
+    {
+        return app()->publicPath($path);
+    }
+
+}
+
+if (! function_exists('resource_path')) {
+
+    function resource_path(string $path = ''): string
+    {
+        return app()->resourcePath($path);
+    }
+
+}
+
+if(!function_exists('path')) {
+
+    function path($key = null, $default = null): mixed
+    {
+        if($key != null) {
+            return app()->make('paths')->get($key, $default);
+        }
+
+        return app()->make('paths');
+    }
+
+}
+
+if(!function_exists('path_join')) {
+
+    function path_join($key, ...$appends): mixed
+    {
+        return app()->make('paths')->get($key) . implode('', $appends);
     }
 
 }

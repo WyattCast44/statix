@@ -23,17 +23,19 @@ class BuildCommand extends Command
 
         $this->info(PHP_EOL . 'Building your site (' . $this->argument('name') . ')');
         $this->line('===============================');
+
+        $path = base_path("builds/{$this->argument('name')}");
                 
         // Clear out any old build of the same name
-        File::deleteDirectory(path_build('builds', $this->argument('name')));
+        File::deleteDirectory($path);
 
         // Ensure build directory exists
-        File::ensureDirectoryExists(path_build('builds', $this->argument('name')), 0777, true);
+        File::ensureDirectoryExists($path, 0777, true);
 
         // Copy any public assets, css, js, favicon, etc
         $this->copyPublicAssetsDirectory();
         
-        require_once path('routes') . '/web.php';
+        require_once base_path('routes/web.php');
 
         $routes = app()->make(RouteRegistrar::class)->routes;
 
@@ -108,7 +110,7 @@ class BuildCommand extends Command
     {
         $start = microtime(true);
         
-        File::copyDirectory(path('public'), path_build('builds', $this->argument('name')));
+        File::copyDirectory(public_path(), base_path("builds/{$this->argument('name')}"));
 
         $this->line('Copying public folder (' . round(microtime(true) - $start, 4) . ')');
     }

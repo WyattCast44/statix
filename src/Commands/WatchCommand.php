@@ -46,7 +46,7 @@ class WatchCommand extends Command
         } 
 
         try {
-            require path('routes') . '/web.php';
+            require base_path('routes/web.php');
             
             $this->call('build', [
                 'name' => $this->argument('build'),
@@ -61,7 +61,7 @@ class WatchCommand extends Command
             config_path(),
             public_path(),
             resource_path('views'),
-            path('routes'),
+            base_path('routes'),
         )->onAnyChange(function(string $type, string $path) {  
 
             if(Str::startsWith($path, Str::replace('/', '\\', config_path()))) {
@@ -80,7 +80,7 @@ class WatchCommand extends Command
                 return;
             }
             
-            require path('routes') . '/web.php';
+            require base_path('routes/web.php');
 
             $this->call('build', [
                 'name' => $this->argument('build'),

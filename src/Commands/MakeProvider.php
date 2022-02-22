@@ -15,11 +15,12 @@ class MakeProvider extends Command
 
     public function handle()
     {   
-        File::ensureDirectoryExists(path_build('cwd', 'app/Providers'));
+
+        File::ensureDirectoryExists(app_path('Providers'));
 
         $name = $this->determineName();
 
-        $path = path_build('app_path', 'Providers', $name . '.php');
+        $path = app_path("Providers/{$name}.php");
 
         $contents = Str::replace('{{ CLASS_NAME }}', $name, File::get(__DIR__. '/stubs/Provider.stub'));
 

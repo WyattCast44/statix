@@ -38,7 +38,7 @@ class ServeCommand extends Command
 
         while ($process->isRunning()) {
 
-            clearstatcache(false, path('env_file'));
+            clearstatcache(false, app('paths')->get('env_file'));
 
             usleep(500 * 1000);
         }

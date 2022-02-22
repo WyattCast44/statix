@@ -19,7 +19,7 @@ class Route
         return tap($instance = new self, function($instance) use ($uri, $view, $data) {
             $instance->uri = $uri;
             $instance->view = $view;
-            $instance->view_path = path_build('views', Str::replace('.', '/', $view) . '.blade.php');
+            $instance->view_path = app()->viewPath(Str::replace('.', '/', $view) . '.blade.php');
             $instance->data = $data;
             $instance->strategy = 'view';
         });
@@ -30,7 +30,7 @@ class Route
         return tap($instance = new self, function($instance) use ($uri, $view, $sequence) {
             $instance->uri = $uri;
             $instance->view = $view;
-            $instance->view_path = path_build('views', Str::replace('.', '/', $view) . '.blade.php');
+            $instance->view_path = app()->viewPath(Str::replace('.', '/', $view) . '.blade.php');
             $instance->sequence = $sequence;
             $instance->strategy = 'sequence';
         });
