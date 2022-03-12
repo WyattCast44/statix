@@ -2,6 +2,8 @@
 title: Directory Structure
 ---
 
+# {{ $page->matter('title') }}
+
 When you scaffold a default statix project the directory structure will look similiar to the tree below
 
 ```bash
