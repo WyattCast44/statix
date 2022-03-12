@@ -1,6 +1,6 @@
 /node_modules
 /tests/example-app/node_modules
-/tests/wyattblogs/node_modules
+/tests/example-app/builds
 /vendor
 /tests/example-app/.env
 /tests/example-app/.env.backup

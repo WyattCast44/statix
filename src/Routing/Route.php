@@ -3,6 +3,7 @@
 namespace Statix\Routing;
 
 use Illuminate\Support\Str;
+use Statix\Actions\BuildRouteTreeFromFileStructrure;
 
 class Route
 {
@@ -34,6 +35,11 @@ class Route
             $instance->sequence = $sequence;
             $instance->strategy = 'sequence';
         });
+    }
+
+    public static function useFileBasedRouting(string $path)
+    {
+        app(BuildRouteTreeFromFileStructrure::class)->execute($path);
     }
 
     public function name($name): self

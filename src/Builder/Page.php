@@ -3,6 +3,7 @@
 namespace Statix\Builder;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Symfony\Component\Yaml\Yaml;
 use Illuminate\Support\Facades\Blade;
@@ -13,11 +14,15 @@ class Page
 
     private $matter;
 
+    private string $uri;
+
     public function __construct(
         private string $path,
         private $contents,
     ) {
-        $this->parseContents();
+        $this
+            ->parseContents()
+            ->determineUri();
     }
 
     private function parseContents()
@@ -42,12 +47,20 @@ class Page
             }
         }
 
-        $data = ($this->hasFrontMatter()) ? $this->matter : [];
-
         $this->body = Blade::render(implode(PHP_EOL.'---'.PHP_EOL, array_slice($parts, 2)), [
             'page' => $this,
         ]);
  
+        return $this;
+    }
+
+    private function determineUri() 
+    {
+        $this->uri = 
+            Str::replace(realpath(resource_path('content')), "", dirname(realpath($this->getPath())))
+            . DIRECTORY_SEPARATOR .  pathinfo($this->getPath(), PATHINFO_FILENAME);
+
+
         return $this;
     }
 
@@ -68,6 +81,11 @@ class Page
     public function getPath(): string 
     {
         return realpath($this->path);
+    }
+
+    public function getUri(): string 
+    {
+        //
     }
 
     public function getUrl(): string

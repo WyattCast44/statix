@@ -1,6 +1,6 @@
 .env
 .env.backup
-/builds/_cache
+/builds/local
 /node_modules
 /vendor
 npm-debug.log

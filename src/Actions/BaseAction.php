@@ -12,6 +12,4 @@ abstract class BaseAction
     {
         $this->app = $app->getInstance();
     }
-
-    public function execute(): void {}
 }

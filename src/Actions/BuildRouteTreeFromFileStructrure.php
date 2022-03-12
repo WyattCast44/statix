@@ -2,17 +2,16 @@
 
 namespace Statix\Actions;
 
-use Statix\Actions\BaseAction;
 use Statix\Builder\Page;
-use Statix\Events\ConfigFilesLoaded;
+use Illuminate\Support\Str;
+use Statix\Actions\BaseAction;
+use Statix\Routing\Route;
 use Symfony\Component\Finder\Finder;
 
 class BuildRouteTreeFromFileStructrure extends BaseAction
 {
-    public function execute(): void
+    public function execute($path): void
     {
-        $path = $this->app->make('paths')->get('content');
-
         if(!is_dir($path)) {
             return;
         }
@@ -47,6 +46,7 @@ class BuildRouteTreeFromFileStructrure extends BaseAction
             }
         }
 
-        dd($pages);
+        $page = collect($pages)->first();
+        dd($page->getExtension());
     }
 }
