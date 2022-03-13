@@ -9,15 +9,10 @@ abstract class TestCase extends BaseTestCase
 {
     public Application $app;
     
-    public function setUp(): void
+    public function useExampleApp(): self
     {
-        chdir(__DIR__ . '/example-app');
+        $app = Application::new(__DIR__ . '/example-app');
 
-        $this->app = Application::new();
-    }
-
-    public function useExampleApp(): Application
-    {
-        return Application::new(__DIR__ . '/example-app');
+        return $this;
     }
 }

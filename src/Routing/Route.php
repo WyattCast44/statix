@@ -39,7 +39,7 @@ class Route
 
     public static function useFileBasedRouting(string $path)
     {
-        app(BuildRouteTreeFromFileStructrure::class)->execute($path);
+        // app(BuildRouteTreeFromFileStructrure::class)->execute($path);
     }
 
     public function name($name): self

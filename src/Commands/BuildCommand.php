@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Support\Facades\File;
 use Statix\Actions\BuildRouteFromView;
+use Statix\Actions\BuildRouteTreeFromFileStructrure;
 
 class BuildCommand extends Command
 {
@@ -24,84 +25,14 @@ class BuildCommand extends Command
         $this->info(PHP_EOL . 'Building your site (' . $this->argument('name') . ')');
         $this->line('===============================');
 
-        $path = base_path("builds/{$this->argument('name')}");
-                
+        $path = builds_path($this->argument('name'));
+
         // Clear out any old build of the same name
-        File::deleteDirectory($path);
+        File::deleteDirectory($path, true);
 
-        // Ensure build directory exists
-        File::ensureDirectoryExists($path, 0777, true);
-
-        // Copy any public assets, css, js, favicon, etc
         $this->copyPublicAssetsDirectory();
-        
-        require_once base_path('routes/web.php');
 
-        $routes = app()->make(RouteRegistrar::class)->routes;
-
-        $pool = Pool::create();
-
-        $pool->concurrency(10);
-
-        foreach ($routes as $route) {
-            $pool->add(function () use ($route) {
-                (new BuildRouteFromView(null, $route))->execute($this->argument('name'));
-            })->then(function ($output) {
-                // Handle success
-            })->catch(function (Throwable $exception) {
-                // Handle exception
-            });
-        }
-
-        $pool->wait();
-
-        collect(app()->make(RouteRegistrar::class)->routes)->each(function($route, $uri) {
-            
-            if($route['strategy'] === 'view'):
-
-                (new BuildRouteFromView($this, $route))->execute();
-                
-                return true;
-                
-            endif;            
-
-            if($route['strategy'] === 'sequence') {
-                
-                $this->error('TODO');
-                return true;
-
-                // if(gettype($route['sequence']) === 'array') {
-
-                    
-                //     foreach ($route['sequence'] as $value) { 
-                //         $start = microtime(true);
-
-                //         $resource = substr(
-                //             $uri, 
-                //             strpos($uri, '{') + 1, 
-                //             strlen(substr($uri, strpos($uri, '}'))) - 1
-                //         );
-                        
-                //         extract([$resource]);
-                        
-                //         // dd([$resource => $value]);
-
-                //         $this->line('Building URI: ' . substr_replace($uri, $value, strpos($uri, '{'), strpos($uri, '}')) . ' (' . round(microtime(true) - $start, 4) . ')');
-                //     }
-
-                // }
-
-                // if($route['sequence'] instanceof Closure) {
-                //     //
-                // }
-
-                // return true;
-
-            }
-
-        });
-
-        app()->make(RouteRegistrar::class)->routes = [];
+        app(BuildRouteTreeFromFileStructrure::class)->execute(resource_path('content'));
 
         $this->comment('Build time: ' . round(microtime(true) - $this->buildStart, 4) . 's');
     }
@@ -110,7 +41,7 @@ class BuildCommand extends Command
     {
         $start = microtime(true);
         
-        File::copyDirectory(public_path(), base_path("builds/{$this->argument('name')}"));
+        File::copyDirectory(public_path(), builds_path($this->argument('name')));
 
         $this->line('Copying public folder (' . round(microtime(true) - $start, 4) . ')');
     }

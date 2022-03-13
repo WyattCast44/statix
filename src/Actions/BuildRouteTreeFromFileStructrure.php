@@ -3,9 +3,7 @@
 namespace Statix\Actions;
 
 use Statix\Builder\Page;
-use Illuminate\Support\Str;
 use Statix\Actions\BaseAction;
-use Statix\Routing\Route;
 use Symfony\Component\Finder\Finder;
 
 class BuildRouteTreeFromFileStructrure extends BaseAction
@@ -46,7 +44,6 @@ class BuildRouteTreeFromFileStructrure extends BaseAction
             }
         }
 
-        $page = collect($pages)->first();
-        dd($page->getExtension());
+        dd($pages);
     }
 }

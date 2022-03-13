@@ -10,29 +10,42 @@ use Illuminate\Support\Facades\Blade;
 
 class Page
 {
+    protected $path; 
+
+    protected $content; 
+
     private $body;
 
     private $matter;
 
     private string $uri;
 
-    public function __construct(
-        private string $path,
-        private $contents,
-    ) {
+    public function __construct(string $path, $contents) 
+    {    
+        $this->path = $path;
+
+        $this->setContent($contents);
+
         $this
             ->parseContents()
             ->determineUri();
+    }
+
+    public function setContent($content): self
+    {
+        $this->content = $content;
+
+        return $this;
     }
 
     private function parseContents()
     {
         $pattern = '/^[\s\r\n]?---[\s\r\n]?$/sm';
 
-        $parts = preg_split($pattern, PHP_EOL.ltrim($this->contents));
+        $parts = preg_split($pattern, PHP_EOL.ltrim($this->content));
 
         if (count($parts) < 3) {
-            $this->body = $this->contents;
+            $this->body = $this->content;
 
             return $this;
         } 
@@ -41,8 +54,21 @@ class Page
 
         if($this->matter != null) {
             foreach ($this->matter as $key => $value) {
-                if(is_int($value)) {
-                    $this->matter[$key] = Carbon::parse($value);
+                if(Str::contains($key, ':')) {
+
+                    switch (Str::after($key, ':')) {
+                        case 'date':
+                            $this->matter[$key] = Carbon::parse($value);
+                            break;
+
+                        case 'bool':
+                            $this->matter[$key] = (bool) $value;
+                            break;
+                        
+                        default:
+                            break;
+                    }
+
                 }
             }
         }
@@ -60,6 +86,7 @@ class Page
             Str::replace(realpath(resource_path('content')), "", dirname(realpath($this->getPath())))
             . DIRECTORY_SEPARATOR .  pathinfo($this->getPath(), PATHINFO_FILENAME);
 
+        $this->uri = Str::replace('.blade', '', $this->uri);
 
         return $this;
     }
@@ -108,8 +135,8 @@ class Page
         return ($time = filemtime($this->getPath())) ? Carbon::parse($time) : Carbon::now();
     }
 
-    public function shouldPublish(callable $cb): bool
+    public function shouldPublish(callable $callback): bool
     {
-        return $cb($this);
+        return $callback($this);
     }
 }

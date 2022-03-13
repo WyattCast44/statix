@@ -5,7 +5,6 @@ namespace Statix;
 use Illuminate\Support\Env;
 use Illuminate\Support\Str;
 use Statix\Events\LocaleUpdated;
-use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
 use Statix\Events\PathsRegistered;
 use Statix\Events\ProvidersBooted;
@@ -242,6 +241,11 @@ class Application extends Container implements ApplicationContract
     public function basePath($path = ''): string
     {
         return $this->basePath.($path != '' ? DIRECTORY_SEPARATOR.$path : '');
+    }
+
+    public function buildsPath($path = ''): string
+    {
+        return $this['paths']->get('builds').($path != '' ? DIRECTORY_SEPARATOR.$path : '');
     }
 
     public function configPath($path = ''): string

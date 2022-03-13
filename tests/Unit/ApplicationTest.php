@@ -14,6 +14,9 @@ class ApplicationTest extends TestCase
 
     public function test_static_new_returns_instance()
     {
-        $this->assertInstanceOf(Application::class, Application::new());
+        $this->assertInstanceOf(
+            Application::class, 
+            Application::new(__DIR__ . '/../example-app')
+        );
     }
 }

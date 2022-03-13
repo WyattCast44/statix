@@ -15,7 +15,7 @@ class ClearBuilds extends Command
     {
         $start = microtime(true);
 
-        File::deleteDirectory(app_path('builds', true));
+        File::deleteDirectory(base_path('builds'), true);
 
         $this->info(PHP_EOL . 'Cleared builds successfully (' . round(microtime(true) - $start, 4) . 's)');
     }

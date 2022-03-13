@@ -152,6 +152,15 @@ if (! function_exists('base_path')) {
 
 }
 
+if (! function_exists('builds_path')) {
+
+    function builds_path(string $path = ''): string
+    {
+        return app()->buildsPath($path);
+    }
+
+}
+
 if (! function_exists('config_path')) {
 
     /**

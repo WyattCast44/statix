@@ -31,7 +31,6 @@ class CliServiceProvider extends ServiceProvider
         MakeComponent::class,
         MakeEvent::class,
         MakeEventsFile::class,
-        MakeHelpersFile::class,
         MakeProvider::class,
         ServeCommand::class,
         WatchCommand::class,
