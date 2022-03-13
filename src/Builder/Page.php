@@ -117,7 +117,7 @@ class Page
 
     public function getUrl(): string
     {
-        return $this->getPath();
+        return $this->uri;
     }
 
     public function getFilename(): string
