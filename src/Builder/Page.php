@@ -7,10 +7,13 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Symfony\Component\Yaml\Yaml;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\File;
 
 class Page
 {
     protected $path; 
+
+    protected $build; 
 
     protected $content; 
 
@@ -20,15 +23,25 @@ class Page
 
     private string $uri;
 
-    public function __construct(string $path, $contents) 
+    public function __construct(string $path, $contents, $build) 
     {    
         $this->path = $path;
+
+        $this->build = $build;
 
         $this->setContent($contents);
 
         $this
             ->parseContents()
             ->determineUri();
+
+        $directory = builds_path($this->getUri());
+        
+        $path = $directory .  DIRECTORY_SEPARATOR . 'index.html';
+
+        File::ensureDirectoryExists($directory);
+
+        File::put($path, $this->body);
     }
 
     public function setContent($content): self
@@ -75,7 +88,7 @@ class Page
 
         $this->body = Blade::render(implode(PHP_EOL.'---'.PHP_EOL, array_slice($parts, 2)), [
             'page' => $this,
-        ]);
+        ], true);
  
         return $this;
     }
@@ -86,7 +99,9 @@ class Page
             Str::replace(realpath(resource_path('content')), "", dirname(realpath($this->getPath())))
             . DIRECTORY_SEPARATOR .  pathinfo($this->getPath(), PATHINFO_FILENAME);
 
-        $this->uri = Str::replace('.blade', '', $this->uri);
+        $this->uri = $this->build . DIRECTORY_SEPARATOR . Str::replace('.blade', '', $this->uri);
+
+        $this->uri = Str::replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $this->uri);
 
         return $this;
     }
@@ -112,12 +127,12 @@ class Page
 
     public function getUri(): string 
     {
-        //
+        return $this->uri;
     }
 
     public function getUrl(): string
     {
-        return $this->uri;
+        //
     }
 
     public function getFilename(): string

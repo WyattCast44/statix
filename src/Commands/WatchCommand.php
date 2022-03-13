@@ -60,8 +60,9 @@ class WatchCommand extends Command
             app_path(),
             config_path(),
             public_path(),
-            resource_path('views'),
             base_path('routes'),
+            resource_path('views'),
+            resource_path('content'),
         )->onAnyChange(function(string $type, string $path) {  
 
             if(Str::startsWith($path, Str::replace('/', '\\', config_path()))) {

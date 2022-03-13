@@ -7,4 +7,4 @@ published: 1
 
 # {{ $page->matter('title') }}
 
-I like to make things too.
+I like to make things

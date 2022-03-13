@@ -8,7 +8,9 @@ use Illuminate\Console\Command;
 use Statix\Routing\RouteRegistrar;
 use Illuminate\Support\Facades\File;
 use Statix\Actions\BuildRouteFromView;
+use Statix\Actions\FindBuildableFiles;
 use Statix\Actions\BuildRouteTreeFromFileStructrure;
+use Statix\Builder\Page;
 
 class BuildCommand extends Command
 {
@@ -32,7 +34,25 @@ class BuildCommand extends Command
 
         $this->copyPublicAssetsDirectory();
 
-        app(BuildRouteTreeFromFileStructrure::class)->execute(resource_path('content'));
+        $files = app(FindBuildableFiles::class)->execute(resource_path('content'));
+
+        $pages = [];
+
+        $pool = Pool::create();
+
+        foreach ($files as $file) {
+            $pool->add(function () use ($file, $pages) {
+                $page = new Page($file, file_get_contents($file), 'local');
+            })->then(function ($output) {
+                //
+            })->catch(function (Throwable $exception) {
+                throw $exception;
+            });
+        }
+
+        $pool->wait();
+
+        // app(BuildRouteTreeFromFileStructrure::class)->execute(resource_path('content'));
 
         $this->comment('Build time: ' . round(microtime(true) - $this->buildStart, 4) . 's');
     }

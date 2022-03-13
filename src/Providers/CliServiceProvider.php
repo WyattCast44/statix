@@ -24,7 +24,6 @@ class CliServiceProvider extends ServiceProvider
 {
     protected $defaultCommands = [
         BuildCommand::class,
-        BuildHttpCommand::class,
         ClearBuilds::class,
         ClearCompiledViews::class,
         MakeCommand::class,
