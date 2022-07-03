@@ -41,18 +41,17 @@ class BuildCommand extends Command
         $pool = Pool::create();
 
         foreach ($files as $file) {
+            $start = microtime(true);
             $pool->add(function () use ($file, $pages) {
                 $page = new Page($file, file_get_contents($file), 'local');
-            })->then(function ($output) {
-                //
-            })->catch(function (Throwable $exception) {
-                throw $exception;
+            })->then(function ($output) use ($file, $start) {
+                $this->info('Built page: ' . $file . ' (' . round(microtime(true) - $this->buildStart, 4) . 's)');
+            })->catch(function (Throwable $exception) use ($file) {
+                $this->error('Error building page: ' . $file);
             });
         }
 
         $pool->wait();
-
-        // app(BuildRouteTreeFromFileStructrure::class)->execute(resource_path('content'));
 
         $this->comment('Build time: ' . round(microtime(true) - $this->buildStart, 4) . 's');
     }

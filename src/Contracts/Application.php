@@ -28,8 +28,6 @@ interface Application extends Container
 
     public function environment(string|array ...$environments): string|bool;
 
-    public function runningInConsole(): bool;
-
     public function runningUnitTests(): bool;
 
     public function getLocale(): string;

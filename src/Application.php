@@ -2,7 +2,6 @@
 
 namespace Statix;
 
-use Illuminate\Support\Env;
 use Illuminate\Support\Str;
 use Statix\Events\LocaleUpdated;
 use Illuminate\Support\Collection;
@@ -31,8 +30,6 @@ class Application extends Container implements ApplicationContract
 {
     const VERSION = '0.0.1';
 
-    protected bool|null $isRunningInConsole = null;
-
     protected string $basePath;
 
     public ConsoleApplication $cli;
@@ -48,9 +45,7 @@ class Application extends Container implements ApplicationContract
 
     public function __construct(string $basePath = null)
     {
-        if($this->runningInConsole()) {
-            (new Collision)->register();
-        }
+        (new Collision)->register();
         
         $this->basePath = ($basePath != null) ? $basePath : getcwd();
         
@@ -292,15 +287,6 @@ class Application extends Container implements ApplicationContract
         }
 
         return $this['env'];
-    }
-
-    public function runningInConsole(): bool
-    {
-        if ($this->isRunningInConsole === null) {
-            $this->isRunningInConsole = Env::get('APP_RUNNING_IN_CONSOLE') ?? (\PHP_SAPI === 'cli' || \PHP_SAPI === 'phpdbg');
-        }
-
-        return $this->isRunningInConsole;
     }
 
     public function runningUnitTests(): bool
