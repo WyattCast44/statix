@@ -73,3 +73,13 @@ Route::redirect('/old', '/new', function() {
 
 # File based routing
 - next.js
+
+# Misc
+
+- new application
+- accept params
+- setup collision
+- configure container
+- init default providers
+    - event
+    - log 
